@@ -4,7 +4,6 @@ html {
 
 body {
   margin: 0px;
-  height: 100%;
   display: flex;
   align-items: center;
   align-content: space-around;
@@ -18,10 +17,11 @@ body,
 }
 
 body.light-theme {
+  color: #FFF;
   background-color: #151515;
 }
 
-body.light-theme .example h1 {
+body.light-theme .example h1, body.light-theme .example a {
   color: #FFFFFF;
 }
 
@@ -41,15 +41,14 @@ body.light-theme .buttons .button:hover {
 
 .example {
   font-family: 'Roboto', sans-serif;
-  width: 550px;
-  height: 378px;
+  width: 60%;
   margin: auto;
   padding: 20px;
   box-sizing: border-box;
 }
 
 .example .flipdown {
-  margin: auto;
+  margin: 1em auto;
 }
 
 .example h1 {

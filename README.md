@@ -1,11 +1,15 @@
-<span style="text-align:center;display:block;width:100%;"><img src="http://i.imgur.com/UtbIc4S.png" style="width:75%" title="Example of FlipDown" style="width: 500px;text-align:center"></span>
+***This project a forked project from [https://github.com/PButcher/flipdown](https://github.com/PButcher/flipdown)***
 
-# FlipDown
+# FlipDown.js Jake's edition 2024
 
 ⏰ A lightweight and performant flip styled countdown clock.
 
-![NPM Version](https://img.shields.io/npm/v/flipdown?style=flat-square)
-![NPM Downloads](https://img.shields.io/npm/dt/flipdown?style=flat-square)
+This project was created by [PButcher](https://github.com/PButcher/flipdown).
+I rewrote the source code in TypeScript and LESS css for some extensions which are listed in the feature list.
+
+<span style="text-align:center;display:block;width:100%;"><img src="example/images/screenshot.png" style="width:75%" title="Example of FlipDown" style="width: 500px;text-align:center"/><img src="https://raw.githubusercontent.com/JakeJP/flipdown/master/example/images/screenshot.png" style="width:75%" title="Example of FlipDown" style="width: 500px;text-align:center"/></span>
+
+
 
 ## Features
 
@@ -15,15 +19,21 @@
 - 🎨 Themeable - Choose from built-in themes, or add your own
 - 🌍 i18n - Customisable headings for your language
 
+### In addition to the original version, Jake's edition features the following
+
+- more Responsive - restructured using Flexbox css so the size fits and stretches along the drawing container.
+- more digits on **Days** rotor.
+- auto hide preceding zeros.
+- on/off heading labels.
+- more lightweight  &lt; 9KB
+
+Respecting the original edition of FlipDown, usage of Javascript class and HTML structure are preserved as much as possible. Extended options are described in API secion.
+
 ## Example
 
-Example live at: https://pbutcher.uk/flipdown/
-
-Remix FlipDown on CodePen: https://codepen.io/PButcher/pen/dzvMzZ
+Example live at: https://jakejp.github.io/flipdown/example/
 
 ## Basic Usage
-
-To get started, either clone this repo or install with `npm install flipdown` or `yarn add flipdown`.
 
 For basic usage, FlipDown takes a unix timestamp (in seconds) as an argument.
 
@@ -37,7 +47,7 @@ Include the [CSS and JS](https://github.com/PButcher/flipdown/tree/master/dist) 
 <div id="flipdown" class="flipdown"></div>
 ```
 
-See a full example [here](https://github.com/PButcher/flipdown/tree/master/example).
+See a full example [here](https://github.com/JakeJP/flipdown/tree/master/example).
 
 ## Multiple Instances
 
@@ -101,6 +111,12 @@ new FlipDown(1538137672, {
 
 Note that headings will default to English if not provided: `["Days", "Hours", "Minutes", "Seconds"]`
 
+Header labels can be turned off by passing null to `headings`.
+
+```javascript
+new FlipDown(1538137672, { headings: null }).start();
+```
+
 ## API
 
 ### `FlipDown.prototype.constructor(uts, [el], [opts])`
@@ -161,8 +177,18 @@ var flipdown = new FlipDown(1538137672)
     console.log("The countdown has ended!");
   });
 ```
+## How to build
+
+Build configuration is not included in the project. But the original source is just 2 files:
+
+- **flipdown.ts** - TypeScript source code should be compiled in `.js` then `.min.js` by minifier
+- **flipdown.less** - LESS CSS file should be compiled in `.css` and `.min.css`  by minifier
 
 ## Acknowledgements
+
+Special thanks to the original project.
+
+- [@PButcker](https://github.com/PButcher)
 
 Thanks to the following people for their suggestions/fixes:
 
