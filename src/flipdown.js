@@ -1,3 +1,9 @@
+var Direction;
+(function (Direction) {
+    Direction[Direction["down"] = 0] = "down";
+    Direction[Direction["up"] = 1] = "up";
+})(Direction || (Direction = {}));
+;
 /**
  * @name FlipDown
  * @description Flip styled countdown clock
@@ -7,13 +13,21 @@
  * @param {object} opt - Optional configuration settings
  **/
 var FlipDown = /** @class */ (function () {
-    function FlipDown(uts, el, opt) {
+    function FlipDown(uts, el, opt, actions) {
         if (el === void 0) { el = "flipdown"; }
-        if (opt === void 0) { opt = {}; }
         this.version = FlipDown.version;
         this.initialised = false;
         this.rotorGroups = [];
-        this.opts = { theme: 'light', headings: FlipDown.headings, showRotors: 'auto' };
+        // default options
+        this.opts = {
+            theme: 'light',
+            headings: FlipDown.headings,
+            showRotors: 'auto',
+            direction: Direction.down,
+            stopAtEnd: true,
+            tick: null,
+            ended: null,
+        };
         // If uts is not specified
         if (typeof uts !== "number") {
             throw new Error("FlipDown: Constructor expected unix timestamp, got ".concat(typeof uts, " instead."));
@@ -34,9 +48,8 @@ var FlipDown = /** @class */ (function () {
         // FlipDown DOM element
         this.element = document.getElementById(el);
         // Parse options
-        this.opts = this._parseOptions(opt);
-        // Set options
-        this._setOptions();
+        this._parseOptions(opt);
+        this.setTheme(this.opts.theme);
         // Print Version
         console.log("FlipDown ".concat(FlipDown.version, " (Theme: ").concat(this.opts.theme, ")"));
     }
@@ -51,6 +64,7 @@ var FlipDown = /** @class */ (function () {
             this._init();
         // Set up the countdown interval
         this.countdown = setInterval(this._tick.bind(this), 1000);
+        this.element.classList.remove("flipdown-stopped");
         // Chainable
         return this;
     };
@@ -58,8 +72,19 @@ var FlipDown = /** @class */ (function () {
         if (this.countdown) {
             clearInterval(this.countdown);
             this.countdown = null;
+            this.element.classList.add("flipdown-stopped");
         }
         return this;
+    };
+    FlipDown.prototype.setTheme = function (name) {
+        if (this.opts.theme != name) {
+            this.element.classList.remove("".concat(FlipDown.themeprefix).concat(this.opts.theme));
+        }
+        this.element.classList.add("".concat(FlipDown.themeprefix).concat(name));
+        this.opts.theme = name;
+    };
+    FlipDown.prototype.getTheme = function () {
+        return this.opts.theme;
     };
     /**
      * @name ifEnded
@@ -100,6 +125,8 @@ var FlipDown = /** @class */ (function () {
                 // Remove the callback
                 this.hasEndedCallback = null;
             }
+            if (this.opts.ended && typeof this.opts.ended == "function")
+                this.opts.ended.call(this, this.now);
             this.element.classList.add("flipdown-ended");
             return true;
             // Countdown has not ended
@@ -116,22 +143,10 @@ var FlipDown = /** @class */ (function () {
      * @author PButcher
      **/
     FlipDown.prototype._parseOptions = function (opt) {
-        return {
-            // Theme
-            theme: opt.hasOwnProperty("theme") ? opt.theme : "dark",
-            headings: opt.headings && opt.headings.length === 4 ? opt.headings :
-                opt.hasOwnProperty("headings") ? null : FlipDown.headings,
-            showRotors: "auto"
-        };
-    };
-    /**
-     * @name _setOptions
-     * @description Set optional configuration settings
-     * @author PButcher
-     **/
-    FlipDown.prototype._setOptions = function () {
-        // Apply theme
-        this.element.classList.add("flipdown__theme-".concat(this.opts.theme));
+        for (var m in this.opts) {
+            if (opt.hasOwnProperty(m))
+                this.opts[m] = opt[m];
+        }
     };
     /**
      * @name _init
@@ -174,7 +189,7 @@ var FlipDown = /** @class */ (function () {
         // Get time now
         this.now = this._getTime();
         // Between now and epoch
-        var diff = this.epoch - this.now <= 0 ? 0 : this.epoch - this.now;
+        var diff = this.epoch - this.now <= 0 ? (this.opts.stopAtEnd ? 0 : this.now - this.epoch) : this.epoch - this.now;
         var index = 0;
         var clockValue;
         // Days remaining
@@ -188,6 +203,8 @@ var FlipDown = /** @class */ (function () {
         diff -= clockValue * 60;
         // Seconds remaining
         this.rotorGroups[index++].clockValue = clockValue = Math.floor(diff);
+        if (this.opts.tick && typeof this.opts.tick == "function")
+            this.opts.tick.call(this, this.epoch - this.now, this.now);
         // Update clock values
         this._updateClockValues();
         // Has the countdown ended?
@@ -202,9 +219,9 @@ var FlipDown = /** @class */ (function () {
     FlipDown.prototype._updateClockValues = function () {
         this.rotorGroups.forEach(function (r) { return r.updateClockValue(); });
     };
-    // FlipDown version
-    FlipDown.version = "0.3.3 j";
+    FlipDown.version = "0.3.4 j";
     FlipDown.headings = ["Days", "Hours", "Minutes", "Seconds"];
+    FlipDown.themeprefix = "flipdown__theme-";
     return FlipDown;
 }());
 (function (FlipDown) {

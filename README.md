@@ -68,6 +68,9 @@ FlipDown comes with 2 themes as standard:
 
 - dark [default]
 - light
+- green
+- yellow
+- red
 
 To change the theme, you can supply the `theme` property in the `opt` object in the constructor with the theme name as a string:
 
@@ -116,6 +119,27 @@ Header labels can be turned off by passing null to `headings`.
 new FlipDown(1538137672, { headings: null }).start();
 ```
 
+## Callbacks
+
+### tick
+
+`tick` specifies a callback function, which is called every time FlipDown flips.
+
+### ended
+
+`ended` is called when FlipDown reaches the end of countdown. (Same as IfEnded )
+
+```javascript
+new FlipDown(1538137672, {
+  tick: function(){
+
+  },
+  ended: function(){
+
+  }
+}).start();
+```
+
 ## API
 
 ### `FlipDown.prototype.constructor(uts, [el], [opts])`
@@ -146,6 +170,8 @@ Optionally specify additional configuration settings. Currently supported settin
 
 - [`theme`](#Themes)
 - [`headings`](#Headings)
+- [`tick`](#tick)
+- [`ended`](#ended)
 
 ### `FlipDown.prototype.start()`
 

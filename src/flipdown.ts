@@ -1,3 +1,13 @@
+type Options = {
+  theme: string,
+  headings?: Array<string>,
+  showRotors: string,
+  direction : Direction,
+  stopAtEnd?: boolean,
+  tick?: ((tick) => void) | null,
+  ended?: ((tick) => void) | null,
+};
+enum Direction { down, up };
 /**
  * @name FlipDown
  * @description Flip styled countdown clock
@@ -7,9 +17,9 @@
  * @param {object} opt - Optional configuration settings
  **/
 class FlipDown {
-  // FlipDown version
-  static version: string = "0.3.3 j";
+  static version: string = "0.3.4 j";
   static headings: Array<string> = ["Days", "Hours", "Minutes", "Seconds"];
+  static themeprefix: string = "flipdown__theme-";
   version: string = FlipDown.version;
   initialised: boolean = false;
   now: number;
@@ -20,11 +30,18 @@ class FlipDown {
   rotorGroups: Array<FlipDown.RotorGroup> = [];
   // stores setInterval timer
   countdown: number | null;
+  // default options
+  opts: Options = {
+      theme: 'light',
+      headings: FlipDown.headings,
+      showRotors: 'auto',
+      direction: Direction.down,
+      stopAtEnd: true,
+      tick: null,
+      ended: null,
+    };
 
-  opts: { theme: string, headings?: Array<string>, showRotors: string } =
-    { theme: 'light', headings: FlipDown.headings, showRotors: 'auto' };
-
-  constructor(uts, el = "flipdown", opt = {}) {
+  constructor(uts, el = "flipdown", opt? : any, actions?: Array<any> ) {
 
     // If uts is not specified
     if (typeof uts !== "number") {
@@ -50,9 +67,8 @@ class FlipDown {
     // FlipDown DOM element
     this.element = document.getElementById(el)!;
     // Parse options
-    this.opts = this._parseOptions(opt);
-    // Set options
-    this._setOptions();
+    this._parseOptions(opt as Options);
+    this.setTheme( this.opts.theme );
     // Print Version
     console.log(`FlipDown ${FlipDown.version} (Theme: ${this.opts.theme})`);
   }
@@ -68,7 +84,7 @@ class FlipDown {
 
     // Set up the countdown interval
     this.countdown = setInterval(this._tick.bind(this), 1000);
-
+    this.element.classList.remove("flipdown-stopped");
     // Chainable
     return this;
   }
@@ -76,10 +92,20 @@ class FlipDown {
     if(this.countdown){
       clearInterval(this.countdown);
       this.countdown = null;
+      this.element.classList.add("flipdown-stopped");
     }
     return this;
   }
-
+  setTheme( name ){
+    if( this.opts.theme != name){
+      this.element.classList.remove(`${FlipDown.themeprefix}${this.opts.theme}`);
+    }
+    this.element.classList.add(`${FlipDown.themeprefix}${name}`);
+    this.opts.theme = name;
+  }
+  getTheme(){
+    return this.opts.theme;
+  }
   /**
    * @name ifEnded
    * @description Call a function once the countdown ends
@@ -119,10 +145,12 @@ class FlipDown {
       if (this.hasEndedCallback != null) {
         // Call ifEnded callback
         this.hasEndedCallback();
-
         // Remove the callback
         this.hasEndedCallback = null;
       }
+      if( this.opts.ended && typeof this.opts.ended == "function")
+        this.opts.ended.call(this,this.now);
+
       this.element.classList.add("flipdown-ended");
 
       return true;
@@ -140,24 +168,11 @@ class FlipDown {
    * @param {object} opt - Optional configuration settings
    * @author PButcher
    **/
-  private _parseOptions(opt) {
-    return {
-      // Theme
-      theme: opt.hasOwnProperty("theme") ? opt.theme : "dark",
-      headings: opt.headings && opt.headings.length === 4 ? opt.headings :
-          opt.hasOwnProperty("headings") ? null : FlipDown.headings,
-      showRotors: "auto"
-    };
-  }
-
-  /**
-   * @name _setOptions
-   * @description Set optional configuration settings
-   * @author PButcher
-   **/
-  private _setOptions() {
-    // Apply theme
-    this.element.classList.add(`flipdown__theme-${this.opts.theme}`);
+  private _parseOptions(opt : Options ) : void {
+    for( var m in this.opts ){
+      if( opt.hasOwnProperty(m) )
+        this.opts[m] = opt[m];
+    }
   }
 
   /**
@@ -207,9 +222,8 @@ class FlipDown {
   private _tick() {
     // Get time now
     this.now = this._getTime();
-
     // Between now and epoch
-    var diff = this.epoch - this.now <= 0 ? 0 : this.epoch - this.now;
+    var diff = this.epoch - this.now <= 0 ? (this.opts.stopAtEnd ? 0 : this.now - this.epoch ) : this.epoch - this.now;
 
     var index = 0;
     var clockValue: number;
@@ -225,6 +239,8 @@ class FlipDown {
     // Seconds remaining
     this.rotorGroups[index++].clockValue = clockValue = Math.floor(diff);
 
+    if( this.opts.tick && typeof this.opts.tick == "function")
+      this.opts.tick.call( this, this.epoch - this.now, this.now );
     // Update clock values
     this._updateClockValues();
 

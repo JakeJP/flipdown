@@ -2,35 +2,67 @@ document.addEventListener('DOMContentLoaded', () => {
 
   var samples = [
     {
-      id: "flipdown1", title: "2 days (normal)",
+      title: "2 days (normal)",
       uts: (new Date().getTime() / 1000) + (86400 * 2) + 1,
       opts: { theme: 'light'}
     },
-    { id: "flipdown2", title: "no days",
-      uts: (new Date().getTime() / 1000) + (86400 * 0.4) + 1,
-      opts: { theme: 'dark'}
-    },
-    { id: "flipdown3", title: "no days no hour",
-    uts: (new Date().getTime() / 1000) + (10) + 1
-    },
-    { id: "flipdown4", title: "4 digits for day",
-      uts: (new Date().getTime() / 1000) + (86400 * 1234) + 1
+    {
+      title: "4 digits for day",
+      uts: (new Date().getTime() / 1000) + (86400 * 1234) + 1,
+      opts: { theme: 'dark' }
     },    
-    { id: "flipdown5", title: "localized headings",
-    uts: (new Date().getTime() / 1000) + (86400 * 2) + 1,
-    opts: { headings: ["日", "時", "分", "秒"] }
-    },
-    { id: "flipdown6", title: "no headings",
+    {
+      title: "no days",
       uts: (new Date().getTime() / 1000) + (86400 * 0.4) + 1,
-      opts: { headings: null }
+      opts: { theme: 'green' }
     },
-  ];
-  // Unix timestamp (in seconds) to count down to
-  var twoDaysFromNow = (new Date().getTime() / 1000) + (86400 * 0.4) + 1;
+    {
+      title: "no days",
+      uts: (new Date().getTime() / 1000) + (86400 * 0.4) + 1,
+      opts: { theme: 'yellow' }
+    },
+    {
+      title: "no headings",
+      uts: (new Date().getTime() / 1000) + (86400 * 0.4) + 1,
+      opts: {theme: 'red', headings: false }
+    },
+    {
+      title: "no days no hour",
+      uts: (new Date().getTime() / 1000) + (60) + 1,
+      opts: {
+        theme: 'light', 
+        tick: function(remaining, now){
+          if( Math.floor(remaining) == 20)
+            this.setTheme('green');
+          else if( Math.floor(remaining) == 10)
+            this.setTheme('yellow');
+          else if( Math.floor(remaining) == 5)
+            this.setTheme('yellow');
+        },
+        ended: function(tick){
+          var fd = this;
+          fd.setTheme('red');
+        }
+      }
+    },
+    {
+      title: "localized headings",
+      uts: (new Date().getTime() / 1000) + (86400 * 2) + 1,
+      opts: { theme: 'dark', headings: ["日", "時", "分", "秒"] }
+    },
 
+  ];
+
+  var flipdowns = [];
   // Set up FlipDown
-  samples.forEach( function(sample){
-    var flipdown = new FlipDown(sample.uts, sample.id, sample.opts )
+  var container = document.getElementById("samplecontainer");
+  samples.forEach( function(sample, i){
+    var div = document.createElement("div");
+    var id = 'flipdown' + i;
+    div.id = id;
+    div.classList.add('flipdown');
+    container.appendChild(div);
+    var flipdown = new FlipDown(sample.uts, id, sample.opts )
       // Start the countdown
       .start()
       //.stop()
@@ -38,6 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
       .ifEnded(() => {
         console.log('The countdown has ended!');
       });
+    flipdowns.push(flipdown);
   });
 
 
@@ -45,10 +78,6 @@ document.addEventListener('DOMContentLoaded', () => {
   var interval = setInterval(() => {
     let body = document.body;
     body.classList.toggle('light-theme');
-    document.querySelectorAll('.flipdown').forEach(function(el){
-      el.classList.toggle('flipdown__theme-dark');
-      el.classList.toggle('flipdown__theme-light');
-    });
   }, 5000);
   // Show version number
   var ver = document.getElementById('ver');

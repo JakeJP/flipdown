@@ -1,12 +1,10 @@
 /* THEMES */
-//@theme-color-dark: #000000;
-//@theme-color-light: #FFFFFF;
+
 .theme(@name, @theme-color){
     @fore-color: contrast(@theme-color);
     .flipdown {
         &.flipdown__theme-@{name} {
             .rotor-group-heading:before {
-                //color: @theme-color;
                 color: #888888;
                 mix-blend-mode: difference;
             }
@@ -23,7 +21,6 @@
             .rotor-bottom,
             .rotor-leaf-rear {
                 /* Rotor bottoms */
-                //color: #EFEFEF;
                 color: darken(negation( @theme-color, #FFFFFF), 6%);
                 color: @fore-color;
                 background-color: lighten(@theme-color, 0%);
@@ -37,47 +34,9 @@
 }
 .theme(dark,#222222);
 .theme(light,#F8F8F8);
-
-.flipdowndd {
-    /********** Theme: light **********/
-    &.flipdown__theme-light {
-        @theme-color: #FFFFFF;
-
-        .rotor-group-heading:before {
-            /* Rotor group headings */
-            color: darken(@theme-color, 6%);
-        }
-        .rotor-group:nth-child(3):before,
-        .rotor-group:nth-child(3):after {
-            color: #000000;
-        }
-
-
-        .rotor-group:nth-child(3):before,
-        .rotor-group:nth-child(3):after {
-            /* Delimeters */
-            color: #DDDDDD;
-        }
-        .rotor,
-        .rotor-top,
-        .rotor-leaf-front {
-            /* Rotor tops */
-            color: #222222;
-            background-color: #DDDDDD;
-        }
-        .rotor-bottom,
-        .rotor-leaf-rear {
-            /* Rotor bottoms */
-            color: #333333;
-            background-color: #EEEEEE;
-        }
-        .rotor:after {
-            /* Hinge */
-            border-top: solid 1px #222222;
-        }
-    }
-}
-/* END OF THEMES */
+.theme(red,#c03131);
+.theme(yellow,#d2d610);
+.theme(green,#2db027);
 
 @speed: 0.5s;
 @font-size: 4em;
@@ -105,7 +64,6 @@
         flex-shrink: 1;
         display: flex;
         gap: 0.1em;
-        //flex-wrap: wrap;
         font-size: @font-size;
 
         &:has(.rotor-group-heading) {
