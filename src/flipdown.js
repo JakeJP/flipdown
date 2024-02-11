@@ -13,6 +13,7 @@ var FlipDown = /** @class */ (function () {
         this.version = FlipDown.version;
         this.initialised = false;
         this.rotorGroups = [];
+        this.opts = { theme: 'light', headings: FlipDown.headings, showRotors: 'auto' };
         // If uts is not specified
         if (typeof uts !== "number") {
             throw new Error("FlipDown: Constructor expected unix timestamp, got ".concat(typeof uts, " instead."));
@@ -99,6 +100,7 @@ var FlipDown = /** @class */ (function () {
                 // Remove the callback
                 this.hasEndedCallback = null;
             }
+            this.element.classList.add("flipdown-ended");
             return true;
             // Countdown has not ended
         }

@@ -21,7 +21,8 @@ class FlipDown {
   // stores setInterval timer
   countdown: number | null;
 
-  opts: { theme: string, headings?: Array<string>, showRotors: string };
+  opts: { theme: string, headings?: Array<string>, showRotors: string } =
+    { theme: 'light', headings: FlipDown.headings, showRotors: 'auto' };
 
   constructor(uts, el = "flipdown", opt = {}) {
 
@@ -122,6 +123,7 @@ class FlipDown {
         // Remove the callback
         this.hasEndedCallback = null;
       }
+      this.element.classList.add("flipdown-ended");
 
       return true;
 

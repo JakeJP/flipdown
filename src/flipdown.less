@@ -1,71 +1,82 @@
 /* THEMES */
+//@theme-color-dark: #000000;
+//@theme-color-light: #FFFFFF;
+.theme(@name, @theme-color){
+    @fore-color: contrast(@theme-color);
+    .flipdown {
+        &.flipdown__theme-@{name} {
+            .rotor-group-heading:before {
+                //color: @theme-color;
+                color: #888888;
+                mix-blend-mode: difference;
+            }
+    
+            .rotor,
+            .rotor-top,
+            .rotor-leaf-front {
+                /* Rotor tops */
+                color: negation( @theme-color, #FFFFFF);
+                color: darken(@fore-color, 6%);
+                background-color: #151515;
+                background-color: darken(@theme-color,2%);
+            }
+            .rotor-bottom,
+            .rotor-leaf-rear {
+                /* Rotor bottoms */
+                //color: #EFEFEF;
+                color: darken(negation( @theme-color, #FFFFFF), 6%);
+                color: @fore-color;
+                background-color: lighten(@theme-color, 0%);
+            }
+            .rotor:after {
+                /* Hinge */
+                border-top: solid 1px lighten(@theme-color,8%);
+            }
+        }
+    }
+}
+.theme(dark,#222222);
+.theme(light,#F8F8F8);
 
-/********** Theme: dark **********/
-/* Font styles */
-.flipdown.flipdown__theme-dark {
-    font-family: sans-serif;
-    font-weight: bold;
-}
-/* Rotor group headings */
-.flipdown.flipdown__theme-dark .rotor-group-heading:before {
-    color: #000000;
-}
-/* Delimeters */
-.flipdown.flipdown__theme-light .rotor-group:nth-child(3):before,
-.flipdown.flipdown__theme-light .rotor-group:nth-child(3):after {
-    color: #000000;
-}
-/* Rotor tops */
-.flipdown.flipdown__theme-dark .rotor,
-.flipdown.flipdown__theme-dark .rotor-top,
-.flipdown.flipdown__theme-dark .rotor-leaf-front {
-    color: #FFFFFF;
-    background-color: #151515;
-}
-/* Rotor bottoms */
-.flipdown.flipdown__theme-dark .rotor-bottom,
-.flipdown.flipdown__theme-dark .rotor-leaf-rear {
-    color: #EFEFEF;
-    background-color: #202020;
-}
-/* Hinge */
-.flipdown.flipdown__theme-dark .rotor:after {
-    border-top: solid 1px #151515;
-}
+.flipdowndd {
+    /********** Theme: light **********/
+    &.flipdown__theme-light {
+        @theme-color: #FFFFFF;
 
-/********** Theme: light **********/
-/* Font styles */
-.flipdown.flipdown__theme-light {
-    font-family: sans-serif;
-    font-weight: bold;
-}
-/* Rotor group headings */
-.flipdown.flipdown__theme-light .rotor-group-heading:before {
-    color: #EEEEEE;
-}
-/* Delimeters */
-.flipdown.flipdown__theme-light .rotor-group:nth-child(3):before,
-.flipdown.flipdown__theme-light .rotor-group:nth-child(3):after {
-    color: #DDDDDD;
-}
-/* Rotor tops */
-.flipdown.flipdown__theme-light .rotor,
-.flipdown.flipdown__theme-light .rotor-top,
-.flipdown.flipdown__theme-light .rotor-leaf-front {
-    color: #222222;
-    background-color: #DDDDDD;
-}
-/* Rotor bottoms */
-.flipdown.flipdown__theme-light .rotor-bottom,
-.flipdown.flipdown__theme-light .rotor-leaf-rear {
-    color: #333333;
-    background-color: #EEEEEE;
-}
-/* Hinge */
-.flipdown.flipdown__theme-light .rotor:after {
-    border-top: solid 1px #222222;
-}
+        .rotor-group-heading:before {
+            /* Rotor group headings */
+            color: darken(@theme-color, 6%);
+        }
+        .rotor-group:nth-child(3):before,
+        .rotor-group:nth-child(3):after {
+            color: #000000;
+        }
 
+
+        .rotor-group:nth-child(3):before,
+        .rotor-group:nth-child(3):after {
+            /* Delimeters */
+            color: #DDDDDD;
+        }
+        .rotor,
+        .rotor-top,
+        .rotor-leaf-front {
+            /* Rotor tops */
+            color: #222222;
+            background-color: #DDDDDD;
+        }
+        .rotor-bottom,
+        .rotor-leaf-rear {
+            /* Rotor bottoms */
+            color: #333333;
+            background-color: #EEEEEE;
+        }
+        .rotor:after {
+            /* Hinge */
+            border-top: solid 1px #222222;
+        }
+    }
+}
 /* END OF THEMES */
 
 @speed: 0.5s;
@@ -74,7 +85,20 @@
 .flipdown {
     overflow: visible;
     display: flex;
-
+    /* Font styles */
+    font-family: sans-serif;
+    font-weight: bold;
+    .rotor:after {
+        /* Hinge */
+        content:'';
+        position:absolute;
+        z-index:20;
+        bottom: 0;
+        left:0;
+        right:0;
+        height: 50%;
+    }
+   
     .rotor-group {
         position: relative;
         flex-grow: 1;
@@ -112,10 +136,6 @@
             border-radius: 4px;
             text-align: center;
             perspective: 200px;
-
-            &:last-child {
-                margin-right: 0;
-            }
 
             .rotor-leaf {
                 z-index: 10;

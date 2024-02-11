@@ -7,8 +7,7 @@
 This project was created by [PButcher](https://github.com/PButcher/flipdown).
 I rewrote the source code in TypeScript and LESS css for some extensions which are listed in the feature list.
 
-<span style="text-align:center;display:block;width:100%;"><img src="example/images/screenshot.png" style="width:75%" title="Example of FlipDown" style="width: 500px;text-align:center"/><img src="https://raw.githubusercontent.com/JakeJP/flipdown/master/example/images/screenshot.png" style="width:75%" title="Example of FlipDown" style="width: 500px;text-align:center"/></span>
-
+<span style="text-align:center;display:block;width:100%;"><img src="example/images/screenshot.png" style="width:75%" title="Example of FlipDown" style="width: 500px;text-align:center"/></span>
 
 
 ## Features
@@ -27,7 +26,7 @@ I rewrote the source code in TypeScript and LESS css for some extensions which a
 - on/off heading labels.
 - more lightweight  &lt; 9KB
 
-Respecting the original edition of FlipDown, usage of Javascript class and HTML structure are preserved as much as possible. Extended options are described in API secion.
+Respecting the original edition of FlipDown, usage of Javascript class and HTML structure are preserved as much as possible.
 
 ## Example
 
@@ -188,7 +187,7 @@ Build configuration is not included in the project. But the original source is j
 
 Special thanks to the original project.
 
-- [@PButcker](https://github.com/PButcher)
+- [@PButcker](https://github.com/PButcher) for the orignal project which my project is based on.
 
 Thanks to the following people for their suggestions/fixes:
 

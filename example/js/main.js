@@ -3,13 +3,15 @@ document.addEventListener('DOMContentLoaded', () => {
   var samples = [
     {
       id: "flipdown1", title: "2 days (normal)",
-      uts: (new Date().getTime() / 1000) + (86400 * 2) + 1
+      uts: (new Date().getTime() / 1000) + (86400 * 2) + 1,
+      opts: { theme: 'light'}
     },
     { id: "flipdown2", title: "no days",
-      uts: (new Date().getTime() / 1000) + (86400 * 0.4) + 1
+      uts: (new Date().getTime() / 1000) + (86400 * 0.4) + 1,
+      opts: { theme: 'dark'}
     },
     { id: "flipdown3", title: "no days no hour",
-    uts: (new Date().getTime() / 1000) + (86400 * 0.02) + 1
+    uts: (new Date().getTime() / 1000) + (10) + 1
     },
     { id: "flipdown4", title: "4 digits for day",
       uts: (new Date().getTime() / 1000) + (86400 * 1234) + 1
