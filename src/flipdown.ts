@@ -1,13 +1,14 @@
 type Options = {
   theme: string,
-  headings?: Array<string>,
-  showRotors: string,
-  direction : Direction,
+  headings: Array<string> | null | boolean,
+  headingsAt: "top" | "bottom",
+  delimiter: boolean | string | null,
+  digits: "auto" | null,
+  direction : "down" | "up",
   stopAtEnd?: boolean,
   tick?: ((tick) => void) | null,
   ended?: ((tick) => void) | null,
 };
-enum Direction { down, up };
 /**
  * @name FlipDown
  * @description Flip styled countdown clock
@@ -32,19 +33,21 @@ class FlipDown {
   countdown: number | null;
   // default options
   opts: Options = {
-      theme: 'light',
+      theme: 'dark',
       headings: FlipDown.headings,
-      showRotors: 'auto',
-      direction: Direction.down,
+      headingsAt: "top",
+      digits: "auto",
+      direction: "down",
       stopAtEnd: true,
+      delimiter: true,
       tick: null,
       ended: null,
     };
 
-  constructor(uts, el = "flipdown", opt? : any, actions?: Array<any> ) {
+  constructor(uts: Date | number, el = "flipdown", opt? : any, actions?: Array<any> ) {
 
     // If uts is not specified
-    if (typeof uts !== "number") {
+    if (typeof uts !== "number" && !(uts instanceof Date)) {
       throw new Error(
         `FlipDown: Constructor expected unix timestamp, got ${typeof uts} instead.`
       );
@@ -59,7 +62,9 @@ class FlipDown {
     // Time at instantiation in seconds
     this.now = this._getTime();
     // UTS to count down to
-    this.epoch = uts;
+    this.epoch =
+      uts instanceof Date ? uts.getTime() / 1000
+        : uts as number;
     // UTS passed to FlipDown is in the past
     this.countdownEnded = false;
     // User defined callback for countdown end
@@ -188,11 +193,11 @@ class FlipDown {
     // Create day rotor group
     this.rotorGroups.push(new FlipDown.RotorGroup(
       daysremaining < 100 ? 2 : daysremaining.toString().length,
-      this.opts.headings ? this.opts.headings[0] : null ));
+      this.opts.headings ? this.opts.headings[0] : null, false, this.opts.headingsAt ));
     // Create other rotor groups
     for (var i = 0; i < 3; i++) {
-      this.rotorGroups.push(new FlipDown.RotorGroup(2, 
-        this.opts.headings ? this.opts.headings[i+1] : null));
+      this.rotorGroups.push(
+        new FlipDown.RotorGroup( 2, this.opts.headings ? this.opts.headings[i+1] : null, this.opts.delimiter, this.opts.headingsAt ));
     }
 
 
@@ -200,7 +205,7 @@ class FlipDown {
     this._tick();
     this._updateClockValues();
     // append all elements at a time
-    var precedingZeroToHide = this.opts.showRotors == "auto";
+    var precedingZeroToHide = this.opts.digits == "auto";
     this.rotorGroups.forEach( g => {
       if( precedingZeroToHide ){
         if( g.clockValue == 0 ){
@@ -307,14 +312,19 @@ namespace FlipDown {
     }
   };
   export class RotorGroup {
-    constructor(numRotors: number, header: string | null ){
+    constructor(numRotors: number, label: string | null, delimiter: string | boolean | null, labelAt : string ){
       var element = document.createElement("div");
       element.className = "rotor-group";
-      if( header ){
+      if( label ){
         var dayRotorGroupHeading = document.createElement("div");
         dayRotorGroupHeading.className = "rotor-group-heading";
-        dayRotorGroupHeading.setAttribute( "data-before",header );
+        dayRotorGroupHeading.setAttribute( "data-before",label );
+        if( labelAt == "bottom" )
+          dayRotorGroupHeading.classList.add("bottom");
         element.appendChild(dayRotorGroupHeading);
+      }
+      if( delimiter ){
+        element.classList.add("delimiter");
       }
       this.element = element;
       this.rotors = [];

@@ -1,17 +1,3 @@
-var Direction;
-(function (Direction) {
-    Direction[Direction["down"] = 0] = "down";
-    Direction[Direction["up"] = 1] = "up";
-})(Direction || (Direction = {}));
-;
-/**
- * @name FlipDown
- * @description Flip styled countdown clock
- * @author Peter Butcher (PButcher) <pbutcher93[at]gmail[dot]com>
- * @param {number} uts - Time to count down to as unix timestamp
- * @param {string} el - DOM element to attach FlipDown to
- * @param {object} opt - Optional configuration settings
- **/
 var FlipDown = /** @class */ (function () {
     function FlipDown(uts, el, opt, actions) {
         if (el === void 0) { el = "flipdown"; }
@@ -20,16 +6,18 @@ var FlipDown = /** @class */ (function () {
         this.rotorGroups = [];
         // default options
         this.opts = {
-            theme: 'light',
+            theme: 'dark',
             headings: FlipDown.headings,
-            showRotors: 'auto',
-            direction: Direction.down,
+            headingsAt: "top",
+            digits: "auto",
+            direction: "down",
             stopAtEnd: true,
+            delimiter: true,
             tick: null,
             ended: null,
         };
         // If uts is not specified
-        if (typeof uts !== "number") {
+        if (typeof uts !== "number" && !(uts instanceof Date)) {
             throw new Error("FlipDown: Constructor expected unix timestamp, got ".concat(typeof uts, " instead."));
         }
         // If opt is specified, but not el
@@ -40,7 +28,9 @@ var FlipDown = /** @class */ (function () {
         // Time at instantiation in seconds
         this.now = this._getTime();
         // UTS to count down to
-        this.epoch = uts;
+        this.epoch =
+            uts instanceof Date ? uts.getTime() / 1000
+                : uts;
         // UTS passed to FlipDown is in the past
         this.countdownEnded = false;
         // User defined callback for countdown end
@@ -158,16 +148,16 @@ var FlipDown = /** @class */ (function () {
         this.initialised = true;
         var daysremaining = Math.floor((this.epoch - this.now) / 86400);
         // Create day rotor group
-        this.rotorGroups.push(new FlipDown.RotorGroup(daysremaining < 100 ? 2 : daysremaining.toString().length, this.opts.headings ? this.opts.headings[0] : null));
+        this.rotorGroups.push(new FlipDown.RotorGroup(daysremaining < 100 ? 2 : daysremaining.toString().length, this.opts.headings ? this.opts.headings[0] : null, false, this.opts.headingsAt));
         // Create other rotor groups
         for (var i = 0; i < 3; i++) {
-            this.rotorGroups.push(new FlipDown.RotorGroup(2, this.opts.headings ? this.opts.headings[i + 1] : null));
+            this.rotorGroups.push(new FlipDown.RotorGroup(2, this.opts.headings ? this.opts.headings[i + 1] : null, this.opts.delimiter, this.opts.headingsAt));
         }
         // Set initial values;
         this._tick();
         this._updateClockValues();
         // append all elements at a time
-        var precedingZeroToHide = this.opts.showRotors == "auto";
+        var precedingZeroToHide = this.opts.digits == "auto";
         this.rotorGroups.forEach(function (g) {
             if (precedingZeroToHide) {
                 if (g.clockValue == 0) {
@@ -225,6 +215,14 @@ var FlipDown = /** @class */ (function () {
     return FlipDown;
 }());
 (function (FlipDown) {
+    /**
+     * @name FlipDown
+     * @description Flip styled countdown clock
+     * @author Peter Butcher (PButcher) <pbutcher93[at]gmail[dot]com>
+     * @param {number} uts - Time to count down to as unix timestamp
+     * @param {string} el - DOM element to attach FlipDown to
+     * @param {object} opt - Optional configuration settings
+     **/
     var Rotor = /** @class */ (function () {
         function Rotor() {
         }
@@ -264,15 +262,20 @@ var FlipDown = /** @class */ (function () {
     FlipDown.Rotor = Rotor;
     ;
     var RotorGroup = /** @class */ (function () {
-        function RotorGroup(numRotors, header) {
+        function RotorGroup(numRotors, label, delimiter, labelAt) {
             var _this = this;
             var element = document.createElement("div");
             element.className = "rotor-group";
-            if (header) {
+            if (label) {
                 var dayRotorGroupHeading = document.createElement("div");
                 dayRotorGroupHeading.className = "rotor-group-heading";
-                dayRotorGroupHeading.setAttribute("data-before", header);
+                dayRotorGroupHeading.setAttribute("data-before", label);
+                if (labelAt == "bottom")
+                    dayRotorGroupHeading.classList.add("bottom");
                 element.appendChild(dayRotorGroupHeading);
+            }
+            if (delimiter) {
+                element.classList.add("delimiter");
             }
             this.element = element;
             this.rotors = [];

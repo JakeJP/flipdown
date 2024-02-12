@@ -3,37 +3,33 @@
 .theme(@name, @theme-color){
     @fore-color: contrast(@theme-color);
     .flipdown {
+
         &.flipdown__theme-@{name} {
-            .rotor-group-heading:before {
+            color: @fore-color;
+            .rotor-group-heading {
                 color: #888888;
-                mix-blend-mode: difference;
             }
-    
-            .rotor,
-            .rotor-top,
-            .rotor-leaf-front {
-                /* Rotor tops */
-                color: negation( @theme-color, #FFFFFF);
-                color: darken(@fore-color, 6%);
-                background-color: #151515;
-                background-color: darken(@theme-color,2%);
-            }
-            .rotor-bottom,
-            .rotor-leaf-rear {
-                /* Rotor bottoms */
-                color: darken(negation( @theme-color, #FFFFFF), 6%);
-                color: @fore-color;
-                background-color: lighten(@theme-color, 0%);
+            .rotor {
+                .rotor-leaf-rear,
+                .rotor-leaf-front,
+                .rotor-top,
+                .rotor-bottom {
+                    background-color: @theme-color;
+                }
+                .rotor-top,
+                .rotor-leaf-front {
+                    filter: brightness(0.95);
+                }
             }
             .rotor:after {
-                /* Hinge */
+                // Hinge
                 border-top: solid 1px lighten(@theme-color,8%);
             }
         }
     }
 }
-.theme(dark,#222222);
-.theme(light,#F8F8F8);
+.theme(dark,#313131);
+.theme(light,#f4f4f4);
 .theme(red,#c03131);
 .theme(yellow,#d2d610);
 .theme(green,#2db027);
@@ -57,10 +53,12 @@
         right:0;
         height: 50%;
     }
+    &.responsive .rotor-group {
+        flex-grow: 1;
+    }
    
     .rotor-group {
         position: relative;
-        flex-grow: 1;
         flex-shrink: 1;
         display: flex;
         gap: 0.1em;
@@ -76,8 +74,14 @@
         }
 
         .rotor-group-heading {
+            
+                top: -1.6rem;
+            
+            &.bottom {
+                top: auto;
+                bottom: -1.6rem;
+            }
             position:absolute;
-            top: -1.6rem;
             flex-basis: 100%;
             flex-grow: 2;
             order: -1;
@@ -87,6 +91,7 @@
 
         .rotor {
             flex-grow: 1;
+            width: 1em;
             position: relative;
             justify-content: center;
             display: flex;
@@ -168,7 +173,7 @@
             margin-right: 0.36em;
             background-color: transparent !important;
         }
-        &:nth-child(n+2):nth-child(-n+3):after
+        &.delimiter:nth-child(n+2):nth-child(-n+3):after
         {
             content: ':';
             background-color: transparent !important;

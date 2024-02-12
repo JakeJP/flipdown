@@ -1,121 +1,97 @@
 /* THEMES */
-.flipdown.flipdown__theme-dark .rotor-group-heading:before {
-  color: #888888;
-  mix-blend-mode: difference;
-}
-.flipdown.flipdown__theme-dark .rotor,
-.flipdown.flipdown__theme-dark .rotor-top,
-.flipdown.flipdown__theme-dark .rotor-leaf-front {
-  /* Rotor tops */
-  color: #dddddd;
-  color: #f0f0f0;
-  background-color: #151515;
-  background-color: #1d1d1d;
-}
-.flipdown.flipdown__theme-dark .rotor-bottom,
-.flipdown.flipdown__theme-dark .rotor-leaf-rear {
-  /* Rotor bottoms */
-  color: #cecece;
+.flipdown.flipdown__theme-dark {
   color: #ffffff;
-  background-color: #222222;
+}
+.flipdown.flipdown__theme-dark .rotor-group-heading {
+  color: #888888;
+}
+.flipdown.flipdown__theme-dark .rotor .rotor-leaf-rear,
+.flipdown.flipdown__theme-dark .rotor .rotor-leaf-front,
+.flipdown.flipdown__theme-dark .rotor .rotor-top,
+.flipdown.flipdown__theme-dark .rotor .rotor-bottom {
+  background-color: #313131;
+}
+.flipdown.flipdown__theme-dark .rotor .rotor-top,
+.flipdown.flipdown__theme-dark .rotor .rotor-leaf-front {
+  filter: brightness(0.95);
 }
 .flipdown.flipdown__theme-dark .rotor:after {
-  /* Hinge */
-  border-top: solid 1px #363636;
+  border-top: solid 1px #454545;
 }
-.flipdown.flipdown__theme-light .rotor-group-heading:before {
+.flipdown.flipdown__theme-light {
+  color: #000000;
+}
+.flipdown.flipdown__theme-light .rotor-group-heading {
   color: #888888;
-  mix-blend-mode: difference;
 }
-.flipdown.flipdown__theme-light .rotor,
-.flipdown.flipdown__theme-light .rotor-top,
-.flipdown.flipdown__theme-light .rotor-leaf-front {
-  /* Rotor tops */
-  color: #070707;
-  color: #000000;
-  background-color: #151515;
-  background-color: #f3f3f3;
+.flipdown.flipdown__theme-light .rotor .rotor-leaf-rear,
+.flipdown.flipdown__theme-light .rotor .rotor-leaf-front,
+.flipdown.flipdown__theme-light .rotor .rotor-top,
+.flipdown.flipdown__theme-light .rotor .rotor-bottom {
+  background-color: #f4f4f4;
 }
-.flipdown.flipdown__theme-light .rotor-bottom,
-.flipdown.flipdown__theme-light .rotor-leaf-rear {
-  /* Rotor bottoms */
-  color: #000000;
-  background-color: #f8f8f8;
+.flipdown.flipdown__theme-light .rotor .rotor-top,
+.flipdown.flipdown__theme-light .rotor .rotor-leaf-front {
+  filter: brightness(0.95);
 }
 .flipdown.flipdown__theme-light .rotor:after {
-  /* Hinge */
   border-top: solid 1px #ffffff;
 }
-.flipdown.flipdown__theme-red .rotor-group-heading:before {
-  color: #888888;
-  mix-blend-mode: difference;
-}
-.flipdown.flipdown__theme-red .rotor,
-.flipdown.flipdown__theme-red .rotor-top,
-.flipdown.flipdown__theme-red .rotor-leaf-front {
-  /* Rotor tops */
-  color: #3fcece;
-  color: #f0f0f0;
-  background-color: #151515;
-  background-color: #b82f2f;
-}
-.flipdown.flipdown__theme-red .rotor-bottom,
-.flipdown.flipdown__theme-red .rotor-leaf-rear {
-  /* Rotor bottoms */
-  color: #30bebe;
+.flipdown.flipdown__theme-red {
   color: #ffffff;
+}
+.flipdown.flipdown__theme-red .rotor-group-heading {
+  color: #888888;
+}
+.flipdown.flipdown__theme-red .rotor .rotor-leaf-rear,
+.flipdown.flipdown__theme-red .rotor .rotor-leaf-front,
+.flipdown.flipdown__theme-red .rotor .rotor-top,
+.flipdown.flipdown__theme-red .rotor .rotor-bottom {
   background-color: #c03131;
 }
+.flipdown.flipdown__theme-red .rotor .rotor-top,
+.flipdown.flipdown__theme-red .rotor .rotor-leaf-front {
+  filter: brightness(0.95);
+}
 .flipdown.flipdown__theme-red .rotor:after {
-  /* Hinge */
   border-top: solid 1px #d14949;
 }
-.flipdown.flipdown__theme-yellow .rotor-group-heading:before {
+.flipdown.flipdown__theme-yellow {
+  color: #000000;
+}
+.flipdown.flipdown__theme-yellow .rotor-group-heading {
   color: #888888;
-  mix-blend-mode: difference;
 }
-.flipdown.flipdown__theme-yellow .rotor,
-.flipdown.flipdown__theme-yellow .rotor-top,
-.flipdown.flipdown__theme-yellow .rotor-leaf-front {
-  /* Rotor tops */
-  color: #2d29ef;
-  color: #000000;
-  background-color: #151515;
-  background-color: #c9cd0f;
-}
-.flipdown.flipdown__theme-yellow .rotor-bottom,
-.flipdown.flipdown__theme-yellow .rotor-leaf-rear {
-  /* Rotor bottoms */
-  color: #1611e8;
-  color: #000000;
+.flipdown.flipdown__theme-yellow .rotor .rotor-leaf-rear,
+.flipdown.flipdown__theme-yellow .rotor .rotor-leaf-front,
+.flipdown.flipdown__theme-yellow .rotor .rotor-top,
+.flipdown.flipdown__theme-yellow .rotor .rotor-bottom {
   background-color: #d2d610;
 }
+.flipdown.flipdown__theme-yellow .rotor .rotor-top,
+.flipdown.flipdown__theme-yellow .rotor .rotor-leaf-front {
+  filter: brightness(0.95);
+}
 .flipdown.flipdown__theme-yellow .rotor:after {
-  /* Hinge */
   border-top: solid 1px #eaee20;
 }
-.flipdown.flipdown__theme-green .rotor-group-heading:before {
-  color: #888888;
-  mix-blend-mode: difference;
-}
-.flipdown.flipdown__theme-green .rotor,
-.flipdown.flipdown__theme-green .rotor-top,
-.flipdown.flipdown__theme-green .rotor-leaf-front {
-  /* Rotor tops */
-  color: #d24fd8;
-  color: #f0f0f0;
-  background-color: #151515;
-  background-color: #2ba825;
-}
-.flipdown.flipdown__theme-green .rotor-bottom,
-.flipdown.flipdown__theme-green .rotor-leaf-rear {
-  /* Rotor bottoms */
-  color: #cc36d2;
+.flipdown.flipdown__theme-green {
   color: #ffffff;
+}
+.flipdown.flipdown__theme-green .rotor-group-heading {
+  color: #888888;
+}
+.flipdown.flipdown__theme-green .rotor .rotor-leaf-rear,
+.flipdown.flipdown__theme-green .rotor .rotor-leaf-front,
+.flipdown.flipdown__theme-green .rotor .rotor-top,
+.flipdown.flipdown__theme-green .rotor .rotor-bottom {
   background-color: #2db027;
 }
+.flipdown.flipdown__theme-green .rotor .rotor-top,
+.flipdown.flipdown__theme-green .rotor .rotor-leaf-front {
+  filter: brightness(0.95);
+}
 .flipdown.flipdown__theme-green .rotor:after {
-  /* Hinge */
   border-top: solid 1px #36d12f;
 }
 .flipdown {
@@ -135,9 +111,11 @@
   right: 0;
   height: 50%;
 }
+.flipdown.responsive .rotor-group {
+  flex-grow: 1;
+}
 .flipdown .rotor-group {
   position: relative;
-  flex-grow: 1;
   flex-shrink: 1;
   display: flex;
   gap: 0.1em;
@@ -151,16 +129,21 @@
   text-align: center;
 }
 .flipdown .rotor-group .rotor-group-heading {
-  position: absolute;
   top: -1.6rem;
+  position: absolute;
   flex-basis: 100%;
   flex-grow: 2;
   order: -1;
   font-size: 1rem;
   width: 100%;
 }
+.flipdown .rotor-group .rotor-group-heading.bottom {
+  top: auto;
+  bottom: -1.6rem;
+}
 .flipdown .rotor-group .rotor {
   flex-grow: 1;
+  width: 1em;
   position: relative;
   justify-content: center;
   display: flex;
@@ -229,7 +212,7 @@
   margin-right: 0.36em;
   background-color: transparent !important;
 }
-.flipdown .rotor-group:nth-child(n+2):nth-child(-n+3):after {
+.flipdown .rotor-group.delimiter:nth-child(n+2):nth-child(-n+3):after {
   content: ':';
   background-color: transparent !important;
   position: absolute;

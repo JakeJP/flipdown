@@ -4,12 +4,13 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       title: "2 days (normal)",
       uts: (new Date().getTime() / 1000) + (86400 * 2) + 1,
+      class: "responsive",
       opts: { theme: 'light'}
     },
     {
       title: "4 digits for day",
       uts: (new Date().getTime() / 1000) + (86400 * 1234) + 1,
-      opts: { theme: 'dark' }
+      opts: { theme: 'dark', delimiter: false }
     },    
     {
       title: "no days",
@@ -28,6 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       title: "no days no hour",
+      style: "font-size: 10px; ",
       uts: (new Date().getTime() / 1000) + (60) + 1,
       opts: {
         theme: 'light', 
@@ -48,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       title: "localized headings",
       uts: (new Date().getTime() / 1000) + (86400 * 2) + 1,
-      opts: { theme: 'dark', headings: ["日", "時", "分", "秒"] }
+      opts: { theme: 'dark', headings: ["日", "時", "分", "秒"], headingsAt: "bottom" }
     },
 
   ];
@@ -62,7 +64,12 @@ document.addEventListener('DOMContentLoaded', () => {
     div.id = id;
     div.classList.add('flipdown');
     container.appendChild(div);
-    var flipdown = new FlipDown(sample.uts, id, sample.opts )
+    var flipdown = new FlipDown(sample.uts, id, sample.opts );
+    if( sample.style )
+      flipdown.element.style = sample.style;
+    if( sample.class )
+      flipdown.element.classList.add(sample.class);
+    flipdown
       // Start the countdown
       .start()
       //.stop()

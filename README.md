@@ -1,10 +1,10 @@
-***This project a forked project from [https://github.com/PButcher/flipdown](https://github.com/PButcher/flipdown)***
+This project a forked project from [https://github.com/PButcher/flipdown](https://github.com/PButcher/flipdown)
 
 # FlipDown.js Jake's edition 2024
 
 ⏰ A lightweight and performant flip styled countdown clock.
 
-This project was created by [PButcher](https://github.com/PButcher/flipdown).
+The original project was created by [PButcher](https://github.com/PButcher/flipdown).
 I rewrote the source code in TypeScript and LESS css for some extensions which are listed in the feature list.
 
 <span style="text-align:center;display:block;width:100%;"><img src="example/images/screenshot.png" style="width:75%" title="Example of FlipDown" style="width: 500px;text-align:center"/></span>
@@ -108,6 +108,7 @@ Suggested use is for i18n. Usage as follows:
 ```javascript
 new FlipDown(1538137672, {
   headings: ["Nap", "Óra", "Perc", "Másodperc"],
+  headingsAt: 'bottom'
 }).start();
 ```
 
@@ -115,8 +116,25 @@ Note that headings will default to English if not provided: `["Days", "Hours", "
 
 Header labels can be turned off by passing null to `headings`.
 
+`headingsAt` option specifies where the heading labels `top` or `bottom`
+
 ```javascript
 new FlipDown(1538137672, { headings: null }).start();
+```
+## Other styling tips
+
+### Reponsive to stretch
+
+```html
+<div id="flipdown" class="flipdown responsive"></div>
+```
+
+### Font color and size
+
+Apply `color` and `font-size` styles on FlipDown element.
+
+```html
+<div id="flipdown" class="flipdown" style="font-size: large; color: red;"></div>
 ```
 
 ## Callbacks
@@ -170,6 +188,7 @@ Optionally specify additional configuration settings. Currently supported settin
 
 - [`theme`](#Themes)
 - [`headings`](#Headings)
+- `headingsAt` top | bottom
 - [`tick`](#tick)
 - [`ended`](#ended)
 
