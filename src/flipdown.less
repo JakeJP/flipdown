@@ -1,13 +1,14 @@
 /* THEMES */
-
 .theme(@name, @theme-color){
     @fore-color: contrast(@theme-color);
     .flipdown {
-
         &.flipdown__theme-@{name} {
             color: @fore-color;
             .rotor-group-heading {
                 color: #888888;
+            }
+            .delimiter {
+                color: @theme-color;
             }
             .rotor {
                 .rotor-leaf-rear,
@@ -36,12 +37,14 @@
 
 @speed: 0.5s;
 @font-size: 4em;
+@corner-radius: 0.1em;
 
 .flipdown {
     overflow: visible;
     display: flex;
     /* Font styles */
     font-family: sans-serif;
+    font-size: @font-size;
     font-weight: bold;
     .rotor:after {
         /* Hinge */
@@ -57,36 +60,52 @@
         flex-grow: 1;
     }
    
+    .rotor-group.hidden + * {
+        display: none;
+    }
     .rotor-group {
         position: relative;
+        justify-content: center;
         flex-shrink: 1;
         display: flex;
         gap: 0.1em;
-        font-size: @font-size;
 
-        &:has(.rotor-group-heading) {
+        &.top {
             margin-top: 2rem;
-        }
-
-        .rotor-group-heading:before {
-            display: block;
-            text-align: center;
-        }
-
-        .rotor-group-heading {
-            
+            margin-bottom: 0;
+            .rotor-group-heading {
+                top: auto;
                 top: -1.6rem;
-            
-            &.bottom {
+            }
+        }
+        &.bottom {
+            margin-top: 0;
+            margin-bottom: 2rem;
+            .rotor-group-heading {
                 top: auto;
                 bottom: -1.6rem;
             }
-            position:absolute;
-            flex-basis: 100%;
-            flex-grow: 2;
+        }
+        &.top, &.bottom {
+            .rotor-group-heading {
+                position:absolute;
+                width: 100%;
+            }
+        }
+        &.right .rotor-group-heading{
+            order: 10;
+        }
+        &.left  .rotor-group-heading{
             order: -1;
+        }
+
+        &.right, &.left {
+            align-items: baseline;
+        }
+
+        .rotor-group-heading {
+            text-align: center;
             font-size: 1rem;
-            width: 100%;
         }
 
         .rotor {
@@ -96,7 +115,7 @@
             justify-content: center;
             display: flex;
             
-            border-radius: 4px;
+            border-radius: @corner-radius;
             text-align: center;
             perspective: 200px;
 
@@ -125,12 +144,12 @@
             .rotor-leaf-front {
                 position: absolute;
                 top: 0;
-                border-radius: 4px 4px 0px 0px;
+                border-radius: @corner-radius @corner-radius 0px 0px;
                 height: 50%;
             }
 
             .rotor-leaf-rear {
-                border-radius: 0px 0px 4px 4px;
+                border-radius: 0px 0px @corner-radius @corner-radius;
                 transform: rotateX(180deg);
                 clip-path: polygon(0 50%, 100% 50%,100% 100%, 0% 100%);
             }
@@ -145,51 +164,21 @@
             .rotor-top {
                 z-index: 9;
                 height: 50%;
-                border-radius: 4px 4px 0px 0px;
+                border-radius: @corner-radius @corner-radius 0px 0px;
             }
 
             .rotor-bottom {
                 z-index: 8;
-                border-radius: 4px;
+                border-radius: @corner-radius;
             }
-        }
-
-        &:nth-child(1) .rotor-group-heading:before {
-            content: attr(data-before);
-        }
-
-        &:nth-child(2) .rotor-group-heading:before {
-            content: attr(data-before);
-        }
-
-        &:nth-child(3) .rotor-group-heading:before {
-            content: attr(data-before);
-        }
-
-        &:nth-child(4) .rotor-group-heading:before {
-            content: attr(data-before);
-        }
-        &:nth-child(-n+3) {
-            margin-right: 0.36em;
-            background-color: transparent !important;
-        }
-        &.delimiter:nth-child(n+2):nth-child(-n+3):after
-        {
-            content: ':';
-            background-color: transparent !important;
-            position: absolute;
-            left: 100%;
-            top: 50%;
-            transform: translateY(-50%);
         }
     }
 }
 
 @media (max-width: 550px) {
-
     .flipdown {
         .rotor-group {
-            font-size: 2.2em;
+            font-size: 50%;
         }
     }
 }

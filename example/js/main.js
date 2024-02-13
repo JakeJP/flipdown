@@ -9,18 +9,18 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       title: "4 digits for day",
-      uts: (new Date().getTime() / 1000) + (86400 * 1234) + 1,
-      opts: { theme: 'dark', delimiter: false }
+      uts: (new Date().getTime() / 1000) + (86400 * 101) + 1,
+      opts: { theme: 'dark', headingsAt: 'right', delimiters: false, headings: ['days','h', 'm', 's']}
     },    
     {
       title: "no days",
-      uts: (new Date().getTime() / 1000) + (86400 * 0.4) + 1,
+      uts: (new Date().getTime() / 1000) + (86400 * 1234) + 1,
       opts: { theme: 'green' }
     },
     {
       title: "no days",
       uts: (new Date().getTime() / 1000) + (86400 * 0.4) + 1,
-      opts: { theme: 'yellow' }
+      opts: { theme: 'yellow' , headingsAt:'bottom'}
     },
     {
       title: "no headings",
@@ -29,10 +29,11 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       title: "no days no hour",
-      style: "font-size: 10px; ",
+      style: "font-size: smaller; ",
       uts: (new Date().getTime() / 1000) + (60) + 1,
       opts: {
         theme: 'light', 
+        headings: false,
         tick: function(remaining, now){
           if( Math.floor(remaining) == 20)
             this.setTheme('green');
@@ -50,7 +51,7 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       title: "localized headings",
       uts: (new Date().getTime() / 1000) + (86400 * 2) + 1,
-      opts: { theme: 'dark', headings: ["日", "時", "分", "秒"], headingsAt: "bottom" }
+      opts: { theme: 'dark', headingsAt: 'right', delimiters: false, headings: ["日", "時", "分", "秒"]}
     },
 
   ];

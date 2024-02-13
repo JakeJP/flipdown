@@ -1,7 +1,22 @@
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = function (d, b) {
+        extendStatics = Object.setPrototypeOf ||
+            ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+            function (d, b) { for (var p in b) if (Object.prototype.hasOwnProperty.call(b, p)) d[p] = b[p]; };
+        return extendStatics(d, b);
+    };
+    return function (d, b) {
+        if (typeof b !== "function" && b !== null)
+            throw new TypeError("Class extends value " + String(b) + " is not a constructor or null");
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 /**
  * @name FlipDown
  * @description Flip styled countdown clock
- * @author Peter Butcher (PButcher) <pbutcher93[at]gmail[dot]com>
+ * @author Peter Butcher (PButcher) <pbutcher93[at]gmail[dot]com>, Jake Yoshimura (JakeJP) <yo-ki[at]yo-ki[dot].com>
  * @param {number} uts - Time to count down to as unix timestamp
  * @param {string} el - DOM element to attach FlipDown to
  * @param {object} opt - Optional configuration settings
@@ -11,7 +26,7 @@ var FlipDown = /** @class */ (function () {
         if (el === void 0) { el = "flipdown"; }
         this.version = FlipDown.version;
         this.initialised = false;
-        this.rotorGroups = [];
+        this.children = [];
         // default options
         this.opts = {
             theme: 'dark',
@@ -20,7 +35,7 @@ var FlipDown = /** @class */ (function () {
             digits: "auto",
             direction: "down",
             stopAtEnd: true,
-            delimiter: true,
+            delimiters: ['&nbsp;', ':', ':', ''],
             tick: null,
             ended: null,
         };
@@ -51,6 +66,13 @@ var FlipDown = /** @class */ (function () {
         // Print Version
         console.log("FlipDown ".concat(FlipDown.version, " (Theme: ").concat(this.opts.theme, ")"));
     }
+    Object.defineProperty(FlipDown.prototype, "rotorGroups", {
+        get: function () {
+            return this.children.filter(function (g) { return g instanceof FlipDown.RotorGroup; });
+        },
+        enumerable: false,
+        configurable: true
+    });
     /**
      * @name start
      * @description Start the countdown
@@ -155,11 +177,16 @@ var FlipDown = /** @class */ (function () {
         var _this = this;
         this.initialised = true;
         var daysremaining = Math.floor((this.epoch - this.now) / 86400);
+        var labelAt = !this.opts.headingsAt || !this.opts.headings ? null : this.opts.headingsAt;
+        var headings = this.opts.headings || FlipDown.emptyHeadings;
+        var delimiters = this.opts.delimiters || FlipDown.emptyDelimiters;
         // Create day rotor group
-        this.rotorGroups.push(new FlipDown.RotorGroup(daysremaining < 100 ? 2 : daysremaining.toString().length, this.opts.headings ? this.opts.headings[0] : null, false, this.opts.headingsAt));
+        this.children.push(new FlipDown.RotorGroup(daysremaining < 100 ? 2 : daysremaining.toString().length, headings[0], labelAt));
+        this.children.push(new FlipDown.Delimiter(delimiters[0], labelAt));
         // Create other rotor groups
         for (var i = 0; i < 3; i++) {
-            this.rotorGroups.push(new FlipDown.RotorGroup(2, this.opts.headings ? this.opts.headings[i + 1] : null, this.opts.delimiter, this.opts.headingsAt));
+            this.children.push(new FlipDown.RotorGroup(2, headings[i + 1], labelAt));
+            this.children.push(new FlipDown.Delimiter(delimiters[i + 1], labelAt));
         }
         // Set initial values;
         this._tick();
@@ -170,12 +197,13 @@ var FlipDown = /** @class */ (function () {
             if (precedingZeroToHide) {
                 if (g.clockValue == 0) {
                     g.element.style.display = "none";
+                    g.element.classList.add("hidden");
                 }
                 else
                     precedingZeroToHide = false;
             }
-            _this.element.appendChild(g.element);
         });
+        this.children.forEach(function (i) { return _this.element.appendChild(i.element); });
         return this;
     };
     /**
@@ -190,17 +218,12 @@ var FlipDown = /** @class */ (function () {
         var diff = this.epoch - this.now <= 0 ? (this.opts.stopAtEnd ? 0 : this.now - this.epoch) : this.epoch - this.now;
         var index = 0;
         var clockValue;
-        // Days remaining
-        clockValue = this.rotorGroups[index++].clockValue = Math.floor(diff / 86400);
-        diff -= clockValue * 86400;
-        // Hours remaining
-        this.rotorGroups[index++].clockValue = clockValue = Math.floor(diff / 3600);
-        diff -= clockValue * 3600;
-        // Minutes remaining
-        this.rotorGroups[index++].clockValue = clockValue = Math.floor(diff / 60);
-        diff -= clockValue * 60;
-        // Seconds remaining
-        this.rotorGroups[index++].clockValue = clockValue = Math.floor(diff);
+        var divs = [86400, 3600, 60, 1];
+        this.rotorGroups
+            .forEach(function (g, i) {
+            clockValue = g.clockValue = Math.floor(diff / divs[i]);
+            diff -= clockValue * divs[i];
+        });
         if (this.opts.tick && typeof this.opts.tick == "function")
             this.opts.tick.call(this, this.epoch - this.now, this.now);
         // Update clock values
@@ -208,18 +231,14 @@ var FlipDown = /** @class */ (function () {
         // Has the countdown ended?
         this._hasCountdownEnded();
     };
-    /**
-     * @name _updateClockValues
-     * @description Update the clock face values
-     * @author PButcher
-     * @param {boolean} init - True if calling for initialisation
-     **/
     FlipDown.prototype._updateClockValues = function () {
         this.rotorGroups.forEach(function (r) { return r.updateClockValue(); });
     };
     FlipDown.version = "0.3.4 j";
     FlipDown.headings = ["Days", "Hours", "Minutes", "Seconds"];
     FlipDown.themeprefix = "flipdown__theme-";
+    FlipDown.emptyDelimiters = [' ', ' ', ' ', ' '];
+    FlipDown.emptyHeadings = [null, null, null, null];
     return FlipDown;
 }());
 (function (FlipDown) {
@@ -261,30 +280,47 @@ var FlipDown = /** @class */ (function () {
     }());
     FlipDown.Rotor = Rotor;
     ;
-    var RotorGroup = /** @class */ (function () {
-        function RotorGroup(numRotors, label, delimiter, labelAt) {
-            var _this = this;
-            var element = document.createElement("div");
-            element.className = "rotor-group";
+    var Delimiter = /** @class */ (function () {
+        function Delimiter(label, labelAt) {
+            this.label = label;
+            var element = this.element = document.createElement("div");
+            this.element.classList.add("rotor-group");
+            if (labelAt)
+                this.element.classList.add(labelAt);
             if (label) {
-                var dayRotorGroupHeading = document.createElement("div");
-                dayRotorGroupHeading.className = "rotor-group-heading";
-                dayRotorGroupHeading.setAttribute("data-before", label);
-                if (labelAt == "bottom")
-                    dayRotorGroupHeading.classList.add("bottom");
-                element.appendChild(dayRotorGroupHeading);
+                this.elementLabel = document.createElement("div");
+                this.elementLabel.classList.add("rotor-group-heading");
+                this.element.appendChild(this.elementLabel);
             }
-            if (delimiter) {
-                element.classList.add("delimiter");
-            }
-            this.element = element;
-            this.rotors = [];
-            for (var i = 0; i < numRotors; i++) {
-                var r = this._createRotor();
-                this.rotors.push(r);
-            }
-            this.rotors.forEach(function (r) { return _this.element.appendChild(r.element); });
+            this.initElement();
         }
+        Delimiter.prototype.initElement = function () {
+            this.element.classList.add("delimiter");
+            var del = document.createElement("div");
+            del.innerHTML = this.label;
+            this.element.appendChild(del);
+        };
+        return Delimiter;
+    }());
+    FlipDown.Delimiter = Delimiter;
+    var RotorGroup = /** @class */ (function (_super) {
+        __extends(RotorGroup, _super);
+        function RotorGroup(numRotors, label, labelAt) {
+            var _this = _super.call(this, label, labelAt) || this;
+            // rotors
+            _this.rotors = [];
+            for (var i = 0; i < numRotors; i++) {
+                var r = _this._createRotor();
+                _this.rotors.push(r);
+            }
+            _this.rotors.forEach(function (r) { return _this.element.appendChild(r.element); });
+            return _this;
+        }
+        RotorGroup.prototype.initElement = function () {
+            if (this.elementLabel) {
+                this.elementLabel.innerHTML = this.label;
+            }
+        };
         /**
          * @name _createRotor
          * @description Create a rotor DOM element
@@ -332,6 +368,6 @@ var FlipDown = /** @class */ (function () {
             return n.length < len ? this.pad("0" + n, len) : n;
         };
         return RotorGroup;
-    }());
+    }(Delimiter));
     FlipDown.RotorGroup = RotorGroup;
 })(FlipDown || (FlipDown = {}));

@@ -24,7 +24,7 @@ I rewrote the source code in TypeScript and LESS css for some extensions which a
 - more digits on **Days** rotor.
 - auto hide preceding zeros.
 - on/off heading labels.
-- more lightweight  &lt; 9KB
+- more lightweight  &lt; 11KB
 
 Respecting the original edition of FlipDown, usage of Javascript class and HTML structure are preserved as much as possible.
 
