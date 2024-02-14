@@ -1,115 +1,51 @@
 /* THEMES */
-.flipdown.flipdown__theme-dark {
+.flipdown {
+  --flip-color: #313131;
+  --fore-color: #ffffff;
   color: #ffffff;
+  color: var(--fore-color);
 }
-.flipdown.flipdown__theme-dark .rotor-group-heading {
+.flipdown .rotor-group-heading {
   color: #888888;
 }
-.flipdown.flipdown__theme-dark .delimiter {
+.flipdown .delimiter {
   color: #313131;
+  color: var(--flip-color);
 }
-.flipdown.flipdown__theme-dark .rotor .rotor-leaf-rear,
-.flipdown.flipdown__theme-dark .rotor .rotor-leaf-front,
-.flipdown.flipdown__theme-dark .rotor .rotor-top,
-.flipdown.flipdown__theme-dark .rotor .rotor-bottom {
+.flipdown .rotor .rotor-leaf-rear,
+.flipdown .rotor .rotor-leaf-front,
+.flipdown .rotor .rotor-top,
+.flipdown .rotor .rotor-bottom {
   background-color: #313131;
+  background-color: var(--flip-color);
 }
-.flipdown.flipdown__theme-dark .rotor .rotor-top,
-.flipdown.flipdown__theme-dark .rotor .rotor-leaf-front {
+.flipdown .rotor .rotor-top,
+.flipdown .rotor .rotor-leaf-front {
   filter: brightness(0.95);
 }
-.flipdown.flipdown__theme-dark .rotor:after {
+.flipdown .rotor:after {
   border-top: solid 1px #454545;
+  border-top: solid 1px var(--flip-color);
+  filter: saturate(1.5) opacity(0.5);
 }
 .flipdown.flipdown__theme-light {
-  color: #000000;
-}
-.flipdown.flipdown__theme-light .rotor-group-heading {
-  color: #888888;
-}
-.flipdown.flipdown__theme-light .delimiter {
-  color: #f4f4f4;
-}
-.flipdown.flipdown__theme-light .rotor .rotor-leaf-rear,
-.flipdown.flipdown__theme-light .rotor .rotor-leaf-front,
-.flipdown.flipdown__theme-light .rotor .rotor-top,
-.flipdown.flipdown__theme-light .rotor .rotor-bottom {
-  background-color: #f4f4f4;
-}
-.flipdown.flipdown__theme-light .rotor .rotor-top,
-.flipdown.flipdown__theme-light .rotor .rotor-leaf-front {
-  filter: brightness(0.95);
-}
-.flipdown.flipdown__theme-light .rotor:after {
-  border-top: solid 1px #ffffff;
+  --flip-color: #f4f4f4;
+  --fore-color: #000000;
 }
 .flipdown.flipdown__theme-red {
-  color: #ffffff;
-}
-.flipdown.flipdown__theme-red .rotor-group-heading {
-  color: #888888;
-}
-.flipdown.flipdown__theme-red .delimiter {
-  color: #c03131;
-}
-.flipdown.flipdown__theme-red .rotor .rotor-leaf-rear,
-.flipdown.flipdown__theme-red .rotor .rotor-leaf-front,
-.flipdown.flipdown__theme-red .rotor .rotor-top,
-.flipdown.flipdown__theme-red .rotor .rotor-bottom {
-  background-color: #c03131;
-}
-.flipdown.flipdown__theme-red .rotor .rotor-top,
-.flipdown.flipdown__theme-red .rotor .rotor-leaf-front {
-  filter: brightness(0.95);
-}
-.flipdown.flipdown__theme-red .rotor:after {
-  border-top: solid 1px #d14949;
+  --flip-color: #c03131;
+  --fore-color: #ffffff;
 }
 .flipdown.flipdown__theme-yellow {
-  color: #000000;
-}
-.flipdown.flipdown__theme-yellow .rotor-group-heading {
-  color: #888888;
-}
-.flipdown.flipdown__theme-yellow .delimiter {
-  color: #d2d610;
-}
-.flipdown.flipdown__theme-yellow .rotor .rotor-leaf-rear,
-.flipdown.flipdown__theme-yellow .rotor .rotor-leaf-front,
-.flipdown.flipdown__theme-yellow .rotor .rotor-top,
-.flipdown.flipdown__theme-yellow .rotor .rotor-bottom {
-  background-color: #d2d610;
-}
-.flipdown.flipdown__theme-yellow .rotor .rotor-top,
-.flipdown.flipdown__theme-yellow .rotor .rotor-leaf-front {
-  filter: brightness(0.95);
-}
-.flipdown.flipdown__theme-yellow .rotor:after {
-  border-top: solid 1px #eaee20;
+  --flip-color: #e9ec3d;
+  --fore-color: #000000;
 }
 .flipdown.flipdown__theme-green {
-  color: #ffffff;
-}
-.flipdown.flipdown__theme-green .rotor-group-heading {
-  color: #888888;
-}
-.flipdown.flipdown__theme-green .delimiter {
-  color: #2db027;
-}
-.flipdown.flipdown__theme-green .rotor .rotor-leaf-rear,
-.flipdown.flipdown__theme-green .rotor .rotor-leaf-front,
-.flipdown.flipdown__theme-green .rotor .rotor-top,
-.flipdown.flipdown__theme-green .rotor .rotor-bottom {
-  background-color: #2db027;
-}
-.flipdown.flipdown__theme-green .rotor .rotor-top,
-.flipdown.flipdown__theme-green .rotor .rotor-leaf-front {
-  filter: brightness(0.95);
-}
-.flipdown.flipdown__theme-green .rotor:after {
-  border-top: solid 1px #36d12f;
+  --flip-color: #2db027;
+  --fore-color: #ffffff;
 }
 .flipdown {
+  --corner-radius: 0.1em;
   overflow: visible;
   display: flex;
   /* Font styles */
@@ -128,7 +64,7 @@
   height: 50%;
 }
 .flipdown.responsive .rotor-group {
-  flex-grow: 1;
+  flex-grow: 4;
 }
 .flipdown .rotor-group.hidden + * {
   display: none;
@@ -140,26 +76,26 @@
   display: flex;
   gap: 0.1em;
 }
+.flipdown .rotor-group.delimiter {
+  padding: 0 0.1em;
+}
 .flipdown .rotor-group.top {
   margin-top: 2rem;
   margin-bottom: 0;
 }
 .flipdown .rotor-group.top .rotor-group-heading {
-  top: auto;
-  top: -1.6rem;
+  bottom: 100%;
 }
 .flipdown .rotor-group.bottom {
   margin-top: 0;
   margin-bottom: 2rem;
 }
 .flipdown .rotor-group.bottom .rotor-group-heading {
-  top: auto;
-  bottom: -1.6rem;
+  top: 100%;
 }
 .flipdown .rotor-group.top .rotor-group-heading,
 .flipdown .rotor-group.bottom .rotor-group-heading {
   position: absolute;
-  width: 100%;
 }
 .flipdown .rotor-group.right .rotor-group-heading {
   order: 10;
@@ -174,20 +110,24 @@
 .flipdown .rotor-group .rotor-group-heading {
   text-align: center;
   font-size: 1rem;
+  padding: 0.4em;
 }
 .flipdown .rotor-group .rotor {
   flex-grow: 1;
-  width: 1em;
   position: relative;
   justify-content: center;
   display: flex;
   border-radius: 0.1em;
+  border-radius: var(--corner-radius);
   text-align: center;
   perspective: 200px;
 }
+.flipdown .rotor-group .rotor .digit {
+  padding: 0.1em 0.2em;
+}
 .flipdown .rotor-group .rotor .rotor-leaf {
   z-index: 10;
-  width: 100%;
+  flex-grow: 1;
   transform-style: preserve-3d;
   transition: transform 0s;
 }
@@ -208,10 +148,12 @@
   position: absolute;
   top: 0;
   border-radius: 0.1em 0.1em 0px 0px;
+  border-radius: var(--corner-radius) var(--corner-radius) 0px 0px;
   height: 50%;
 }
 .flipdown .rotor-group .rotor .rotor-leaf-rear {
   border-radius: 0px 0px 0.1em 0.1em;
+  border-radius: 0px 0px var(--corner-radius) var(--corner-radius);
   transform: rotateX(180deg);
   clip-path: polygon(0 50%, 100% 50%, 100% 100%, 0% 100%);
 }
@@ -225,10 +167,12 @@
   z-index: 9;
   height: 50%;
   border-radius: 0.1em 0.1em 0px 0px;
+  border-radius: var(--corner-radius) var(--corner-radius) 0px 0px;
 }
 .flipdown .rotor-group .rotor .rotor-bottom {
   z-index: 8;
   border-radius: 0.1em;
+  border-radius: var(--corner-radius);
 }
 @media (max-width: 550px) {
   .flipdown .rotor-group {

@@ -33,6 +33,7 @@ var FlipDown = /** @class */ (function () {
             headings: FlipDown.headings,
             headingsAt: "top",
             digits: "auto",
+            rotor: null,
             direction: "down",
             stopAtEnd: true,
             delimiters: ['&nbsp;', ':', ':', ''],
@@ -181,11 +182,13 @@ var FlipDown = /** @class */ (function () {
         var headings = this.opts.headings || FlipDown.emptyHeadings;
         var delimiters = this.opts.delimiters || FlipDown.emptyDelimiters;
         // Create day rotor group
-        this.children.push(new FlipDown.RotorGroup(daysremaining < 100 ? 2 : daysremaining.toString().length, headings[0], labelAt));
+        this.children.push(new FlipDown.RotorGroup(this.opts.rotor || (daysremaining < 100 ? 2 : daysremaining.toString().length), headings[0], labelAt));
+        //if( delimiters[0] )
         this.children.push(new FlipDown.Delimiter(delimiters[0], labelAt));
         // Create other rotor groups
         for (var i = 0; i < 3; i++) {
-            this.children.push(new FlipDown.RotorGroup(2, headings[i + 1], labelAt));
+            this.children.push(new FlipDown.RotorGroup(this.opts.rotor || 2, headings[i + 1], labelAt));
+            //if( delimiters[i+1] )
             this.children.push(new FlipDown.Delimiter(delimiters[i + 1], labelAt));
         }
         // Set initial values;
@@ -237,15 +240,31 @@ var FlipDown = /** @class */ (function () {
     FlipDown.version = "0.3.4 j";
     FlipDown.headings = ["Days", "Hours", "Minutes", "Seconds"];
     FlipDown.themeprefix = "flipdown__theme-";
-    FlipDown.emptyDelimiters = [' ', ' ', ' ', ' '];
+    FlipDown.emptyDelimiters = ['', '', '', ''];
     FlipDown.emptyHeadings = [null, null, null, null];
     return FlipDown;
 }());
 (function (FlipDown) {
     var Rotor = /** @class */ (function () {
-        function Rotor() {
+        function Rotor(v) {
+            var o = this;
+            var rotor = o.element = document.createElement("div");
+            rotor.className = "rotor";
+            rotor.innerHTML = "<div class='rotor-leaf'><div class='rotor-leaf-rear'><div class='digit'></div></div><div class='rotor-leaf-front'><div class='digit'></div></div></div>"
+                + "<div class='rotor-top'><div class='digit'></div></div><div class='rotor-bottom'><div class='digit'></div></div>";
+            o.rotorLeaf = rotor.querySelector("[class='rotor-leaf']");
+            o.rotorLeafRear = rotor.querySelector("[class='rotor-leaf-rear'] [class='digit']");
+            o.rotorLeafFront = rotor.querySelector("[class='rotor-leaf-front'] [class='digit']");
+            o.rotorTop = rotor.querySelector("[class='rotor-top'] [class='digit']");
+            o.rotorBottom = rotor.querySelector("[class='rotor-bottom'] [class='digit']");
+            var text = v.toString();
+            o.rotorLeafRear.textContent = text;
+            o.rotorTop.textContent = text;
+            o.rotorBottom.textContent = text;
         }
         Rotor.prototype.setText = function (text) {
+            //if( this.prevClockValue && text == this.prevClockValue )
+            //  return;
             this.rotorLeafFront.textContent = this.prevClockValue;
             this.rotorBottom.textContent = this.prevClockValue;
             var me = this;
@@ -258,9 +277,9 @@ var FlipDown = /** @class */ (function () {
                 var el = me.rotorLeafRear;
                 if (el.textContent != text) {
                     el.textContent = text;
-                    el.parentElement.classList.add("flipped");
+                    me.rotorLeaf.classList.add("flipped");
                     var flip = setInterval(function () {
-                        el.parentElement.classList.remove("flipped");
+                        me.rotorLeaf.classList.remove("flipped");
                         clearInterval(flip);
                     }.bind(this), 500);
                 }
@@ -287,11 +306,6 @@ var FlipDown = /** @class */ (function () {
             this.element.classList.add("rotor-group");
             if (labelAt)
                 this.element.classList.add(labelAt);
-            if (label) {
-                this.elementLabel = document.createElement("div");
-                this.elementLabel.classList.add("rotor-group-heading");
-                this.element.appendChild(this.elementLabel);
-            }
             this.initElement();
         }
         Delimiter.prototype.initElement = function () {
@@ -310,51 +324,38 @@ var FlipDown = /** @class */ (function () {
             // rotors
             _this.rotors = [];
             for (var i = 0; i < numRotors; i++) {
-                var r = _this._createRotor();
+                var r = new Rotor(0);
                 _this.rotors.push(r);
             }
             _this.rotors.forEach(function (r) { return _this.element.appendChild(r.element); });
             return _this;
         }
         RotorGroup.prototype.initElement = function () {
+            if (this.label /*&& (labelAt == "top" || labelAt == "bottom")*/) {
+                this.elementLabel = document.createElement("div");
+                this.elementLabel.classList.add("rotor-group-heading");
+                this.element.appendChild(this.elementLabel);
+            }
             if (this.elementLabel) {
                 this.elementLabel.innerHTML = this.label;
             }
         };
-        /**
-         * @name _createRotor
-         * @description Create a rotor DOM element
-         * @author PButcher
-         * @param {number} v - Initial rotor value
-         **/
-        RotorGroup.prototype._createRotor = function (v) {
-            if (v === void 0) { v = 0; }
-            var o = new Rotor();
-            var rotor = o.element = document.createElement("div");
-            rotor.className = "rotor";
-            o.rotorLeaf = document.createElement("div");
-            o.rotorLeafRear = document.createElement("figure");
-            o.rotorLeafFront = document.createElement("figure");
-            o.rotorTop = document.createElement("div");
-            o.rotorBottom = document.createElement("div");
-            o.rotorLeaf.className = "rotor-leaf";
-            o.rotorLeafRear.className = "rotor-leaf-rear";
-            o.rotorLeafFront.className = "rotor-leaf-front";
-            o.rotorTop.className = "rotor-top";
-            o.rotorBottom.className = "rotor-bottom";
-            o.rotorLeafRear.textContent = v.toString();
-            o.rotorTop.textContent = v.toString();
-            o.rotorBottom.textContent = v.toString();
-            [o.rotorLeaf, o.rotorTop, o.rotorBottom].forEach(function (r) { return o.element.appendChild(r); });
-            [o.rotorLeafRear, o.rotorLeafFront].forEach(function (r) { return o.rotorLeaf.appendChild(r); });
-            return o;
-        };
         RotorGroup.prototype.updateClockValue = function () {
-            var clockValueAsString = this.pad(this.clockValue, 2);
+            var nnn = this.pad(this.clockValue, 2);
             var index = 0;
-            this.rotors.forEach(function (r) {
-                r.setText(clockValueAsString[index++]);
-            });
+            var rr = this.rotors.length;
+            var p;
+            var ri = 0;
+            var i = 0;
+            if (rr < nnn.length) {
+                p = nnn.substring(0, nnn.length - rr + 1);
+                i = nnn.length - rr;
+            }
+            else
+                p = nnn[0];
+            for (; i < nnn.length; p = nnn[++i]) {
+                this.rotors[ri++].setText(p);
+            }
         };
         /**
          * @name pad

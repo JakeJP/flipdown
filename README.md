@@ -64,7 +64,7 @@ new FlipDown(1593561600, "eventStart").start();
 
 ## Themes
 
-FlipDown comes with 2 themes as standard:
+FlipDown comes with 5 themes as predfined:
 
 - dark [default]
 - light
@@ -72,7 +72,7 @@ FlipDown comes with 2 themes as standard:
 - yellow
 - red
 
-To change the theme, you can supply the `theme` property in the `opt` object in the constructor with the theme name as a string:
+To set the theme, you can supply the `theme` property in the `opt` object in the constructor with the theme name as a string:
 
 ```javascript
 {
@@ -88,16 +88,28 @@ new FlipDown(1538137672, {
 }).start();
 ```
 
-### Custom Themes
+colors and other styles can be customized as described in the next section.
 
-Custom themes can be added by adding a new stylesheet using the FlipDown [theme template](https://github.com/PButcher/flipdown/blob/master/src/flipdown.css#L3-L34).
+### Custom CSS Styles
 
-FlipDown themes must have the class name prefix of: `.flipdown__theme-` followed by the name of your theme. For example, the standard theme class names are:
+Setting styles with CSS variables on the flipdown element, more customization can be done.
 
-- `.flipdown__theme-dark`
-- `.flipdown__theme-light`
+- `color` defines font color which is usually for digits.
+- `font-size` defines font size of digits.
+- `--flip-color` defines theme color of flips.
+- `--corner-radius` for corners of flips.
 
-You can then load your theme by specifying the `theme` property in the `opt` object of the constructor (see [Themes](#Themes)).
+```html
+  <div class="flipdown" style="color: black; --flip-color: red; --corner-radius: 1em"></div>
+```
+
+To customize the each digit, apply style using  `.flipdown .digit` selector.
+
+```css
+  .flipdown .digit {
+    padding: 0.6em;
+  }
+```
 
 ## Headings
 
@@ -114,27 +126,26 @@ new FlipDown(1538137672, {
 
 Note that headings will default to English if not provided: `["Days", "Hours", "Minutes", "Seconds"]`
 
-Header labels can be turned off by passing null to `headings`.
+Header labels can be turned off by passing null or false to `headings`.
 
-`headingsAt` option specifies where the heading labels `top` or `bottom`
+`headingsAt` option specifies where the heading labels locate, `top` , `bottom`, `left` or `right`.
 
 ```javascript
-new FlipDown(1538137672, { headings: null }).start();
+new FlipDown(1538137672, { headings: nufalsell }).start();
 ```
-## Other styling tips
+
+Heading text can be styled with `.flipdown .rotor-group-heading` selector.
+
+```css
+  .flipdown .rotor-group-heading {
+    font-size: 0.6em;
+  }
+```
 
 ### Reponsive to stretch
 
 ```html
 <div id="flipdown" class="flipdown responsive"></div>
-```
-
-### Font color and size
-
-Apply `color` and `font-size` styles on FlipDown element.
-
-```html
-<div id="flipdown" class="flipdown" style="font-size: large; color: red;"></div>
 ```
 
 ## Callbacks
@@ -188,7 +199,8 @@ Optionally specify additional configuration settings. Currently supported settin
 
 - [`theme`](#Themes)
 - [`headings`](#Headings)
-- `headingsAt` top | bottom
+- `headingsAt` top | bottom | left | right
+- `rotor` `1` to group all digits in one rotor.
 - [`tick`](#tick)
 - [`ended`](#ended)
 

@@ -4,6 +4,7 @@ type Options = {
   headingsAt: "top" | "bottom" | "left" | "right",
   delimiters: Array<string>,
   digits: "auto" | null,
+  rotor: number | null,
   direction : "down" | "up",
   stopAtEnd?: boolean,
   tick?: ((tick) => void) | null,
@@ -21,7 +22,7 @@ class FlipDown {
   static version: string = "0.3.4 j";
   static headings: Array<string> = ["Days", "Hours", "Minutes", "Seconds"];
   static themeprefix: string = "flipdown__theme-";
-  static emptyDelimiters: Array<string> = [' ',' ',' ',' '];
+  static emptyDelimiters: Array<string> = ['','','',''];
   static emptyHeadings: Array<string|null> = [null,null,null,null];
   version: string = FlipDown.version;
   initialised: boolean = false;
@@ -42,6 +43,7 @@ class FlipDown {
       headings: FlipDown.headings,
       headingsAt: "top",
       digits: "auto",
+      rotor: null,
       direction: "down",
       stopAtEnd: true,
       delimiters: ['&nbsp;',':',':',''],
@@ -199,16 +201,18 @@ class FlipDown {
     var delimiters = this.opts.delimiters || FlipDown.emptyDelimiters;
     // Create day rotor group
     this.children.push(new FlipDown.RotorGroup(
-      daysremaining < 100 ? 2 : daysremaining.toString().length,
+      this.opts.rotor || ( daysremaining < 100 ? 2 : daysremaining.toString().length ),
       headings[0], labelAt ));
-    this.children.push(new FlipDown.Delimiter( delimiters[0], labelAt ));
+    //if( delimiters[0] )
+      this.children.push(new FlipDown.Delimiter( delimiters[0], labelAt ));
         
     // Create other rotor groups
     for (var i = 0; i < 3; i++) {
       this.children.push(
-        new FlipDown.RotorGroup( 2, headings[i+1], labelAt ));
-      this.children.push(
-        new FlipDown.Delimiter( delimiters[i+1], labelAt ));
+        new FlipDown.RotorGroup( this.opts.rotor || 2, headings[i+1], labelAt ));
+      //if( delimiters[i+1] )
+        this.children.push(
+          new FlipDown.Delimiter( delimiters[i+1], labelAt ));
     }
 
     // Set initial values;
@@ -274,7 +278,27 @@ namespace FlipDown {
     rotorTop: HTMLElement;
     rotorBottom: HTMLElement;
     prevClockValue: string;
+    constructor( v : any ){
+      var o = this;
+      var rotor = o.element = document.createElement("div");
+      rotor.className = "rotor";
+      rotor.innerHTML = "<div class='rotor-leaf'><div class='rotor-leaf-rear'><div class='digit'></div></div><div class='rotor-leaf-front'><div class='digit'></div></div></div>"
+        + "<div class='rotor-top'><div class='digit'></div></div><div class='rotor-bottom'><div class='digit'></div></div>";
+
+      o.rotorLeaf= rotor.querySelector("[class='rotor-leaf']")!;
+      o.rotorLeafRear = rotor.querySelector("[class='rotor-leaf-rear'] [class='digit']")!;
+      o.rotorLeafFront = rotor.querySelector("[class='rotor-leaf-front'] [class='digit']")!;
+      o.rotorTop = rotor.querySelector("[class='rotor-top'] [class='digit']")!;
+      o.rotorBottom = rotor.querySelector("[class='rotor-bottom'] [class='digit']")!;
+
+      var text = v.toString();
+      o.rotorLeafRear.textContent = text;
+      o.rotorTop.textContent = text;
+      o.rotorBottom.textContent = text;      
+    }
     setText( text: string) : void {
+      //if( this.prevClockValue && text == this.prevClockValue )
+      //  return;
       this.rotorLeafFront.textContent = this.prevClockValue;
       this.rotorBottom.textContent = this.prevClockValue;
 
@@ -287,12 +311,12 @@ namespace FlipDown {
 
       function rotorLeafRearFlip() {
         var el = me.rotorLeafRear;
-        if (el.textContent != text) {
+        if ( el.textContent != text) {
           el.textContent = text;
-          el.parentElement!.classList.add("flipped");
+          me.rotorLeaf.classList.add("flipped");
           var flip = setInterval(
             function () {
-              el.parentElement!.classList.remove("flipped");
+              me.rotorLeaf.classList.remove("flipped");
               clearInterval(flip);
             }.bind(this),
             500
@@ -324,12 +348,7 @@ namespace FlipDown {
       this.element.classList.add("rotor-group");
       if( labelAt )
         this.element.classList.add(labelAt as string);
-      if( label ) {
-        this.elementLabel = document.createElement("div");
-        this.elementLabel.classList.add("rotor-group-heading");
 
-        this.element.appendChild(this.elementLabel);
-      }
       this.initElement();
     }
     initElement(){
@@ -347,55 +366,40 @@ namespace FlipDown {
       // rotors
       this.rotors = [];
       for( var i=0; i< numRotors; i++ ){
-        var r = this._createRotor();
+        var r = new Rotor(0);
         this.rotors.push(r);
       }
       this.rotors.forEach(r => this.element.appendChild(r.element));
     }
     initElement(){
+      if( this.label /*&& (labelAt == "top" || labelAt == "bottom")*/ ) {
+        this.elementLabel = document.createElement("div");
+        this.elementLabel.classList.add("rotor-group-heading");
+
+        this.element.appendChild(this.elementLabel);
+      }
       if( this.elementLabel ){
         this.elementLabel.innerHTML = this.label as string;
       }
     }
-    /**
-     * @name _createRotor
-     * @description Create a rotor DOM element
-     * @author PButcher
-     * @param {number} v - Initial rotor value
-     **/
-    _createRotor(v = 0) : Rotor {
-      var o = new Rotor();
-      var rotor = o.element = document.createElement("div");
-      rotor.className = "rotor";
-
-      o.rotorLeaf= document.createElement("div");
-      o.rotorLeafRear = document.createElement("figure");
-      o.rotorLeafFront = document.createElement("figure");
-      o.rotorTop = document.createElement("div");
-      o.rotorBottom = document.createElement("div");
-
-      o.rotorLeaf.className = "rotor-leaf";
-      o.rotorLeafRear.className = "rotor-leaf-rear";
-      o.rotorLeafFront.className = "rotor-leaf-front";
-      o.rotorTop.className = "rotor-top";
-      o.rotorBottom.className = "rotor-bottom";
-      o.rotorLeafRear.textContent = v.toString();
-      o.rotorTop.textContent = v.toString();
-      o.rotorBottom.textContent = v.toString();
-      [o.rotorLeaf, o.rotorTop, o.rotorBottom].forEach(r => o.element.appendChild(r));
-      [o.rotorLeafRear, o.rotorLeafFront].forEach(r => o.rotorLeaf.appendChild(r));
-      return o;
-    }
-
 
     rotors: Array<Rotor>;
     clockValue: number;
     updateClockValue(){
-      var clockValueAsString = this.pad(this.clockValue,2);
+      var nnn = this.pad(this.clockValue,2);
       var index = 0;
-      this.rotors.forEach(r =>{
-        r.setText( clockValueAsString[index++]);
-      });
+      var rr = this.rotors.length;
+      var p: string; var ri: number = 0; var i: number = 0;
+      if( rr < nnn.length ){
+        p = nnn.substring(0, nnn.length - rr + 1);
+        i = nnn.length - rr;
+      }
+      else
+        p = nnn[0];
+      for( ; i < nnn.length; p = nnn[++i] ){
+        this.rotors[ri++].setText(p);
+      }
+
     }
     /**
      * @name pad
