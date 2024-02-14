@@ -1,13 +1,12 @@
-This project a forked project from [https://github.com/PButcher/flipdown](https://github.com/PButcher/flipdown)
+This project a forked project from [https://github.com/PButcher/flipdown](https://github.com/PButcher/flipdown) The original project was created by [PButcher](https://github.com/PButcher/flipdown).
 
 # FlipDown.js Jake's edition 2024
 
 ⏰ A lightweight and performant flip styled countdown clock.
 
-The original project was created by [PButcher](https://github.com/PButcher/flipdown).
-I rewrote the source code in TypeScript and LESS css for some extensions which are listed in the feature list.
+I rewrote the source code in TypeScript and LESS CSS for some extensions which are listed in the feature list.
 
-<span style="text-align:center;display:block;width:100%;"><img src="example/images/screenshot.png" style="width:75%" title="Example of FlipDown" style="width: 500px;text-align:center"/></span>
+<div style="text-align:center;"><img src="example/images/screenshot.png" title="Example of FlipDown" style="max-width: 100%;text-align:center"/></div>
 
 
 ## Features
@@ -20,11 +19,10 @@ I rewrote the source code in TypeScript and LESS css for some extensions which a
 
 ### In addition to the original version, Jake's edition features the following
 
-- more Responsive - restructured using Flexbox css so the size fits and stretches along the drawing container.
-- more digits on **Days** rotor.
+- more Responsive - restructured using CSS Flexbox so the size fits and stretches along the drawing container.
+- more digits on **Days** rotor. Grouping digits in one rotor.
 - auto hide preceding zeros.
-- on/off heading labels.
-- more lightweight  &lt; 11KB
+- on/off heading labels and locations selectable.
 
 Respecting the original edition of FlipDown, usage of Javascript class and HTML structure are preserved as much as possible.
 
@@ -32,19 +30,29 @@ Respecting the original edition of FlipDown, usage of Javascript class and HTML 
 
 Example live at: https://jakejp.github.io/flipdown/example/
 
-## Basic Usage
+## Get started
 
-For basic usage, FlipDown takes a unix timestamp (in seconds) as an argument.
+#### 1. Include the [CSS and JS](https://github.com/JakeJP/flipdown/tree/master/dist) in `<head>` and include the following line in your HTML.
+
+```html
+<link rel="stylesheet" type="text/css" href="css/flipdown/flipdown.css">
+<script type="text/javascript" src="js/flipdown/flipdown.js"></script>
+```
+
+```html
+<div id="flipdown" class="flipdown"></div>
+```
+
+#### 2. insert a bit of Javascript. FlipDown takes a Date or unix timestamp (in seconds) to countdown to as an argument.
 
 ```javascript
 new FlipDown(1538137672).start();
 ```
 
-Include the [CSS and JS](https://github.com/PButcher/flipdown/tree/master/dist) in `<head>` and include the following line in your HTML.
-
-```html
-<div id="flipdown" class="flipdown"></div>
+```javascript
+new FlipDown(new DateTime(2024, 12,25)).start();
 ```
+
 
 See a full example [here](https://github.com/JakeJP/flipdown/tree/master/example).
 
@@ -72,13 +80,7 @@ FlipDown comes with 5 themes as predfined:
 - yellow
 - red
 
-To set the theme, you can supply the `theme` property in the `opt` object in the constructor with the theme name as a string:
-
-```javascript
-{
-  theme: "light";
-}
-```
+To set the theme, you can supply the `theme` property in the `opt` object in the constructor with the theme name as a string.
 
 For example, to instantiate FlipDown using the light theme instead:
 
@@ -90,30 +92,37 @@ new FlipDown(1538137672, {
 
 colors and other styles can be customized as described in the next section.
 
-### Custom CSS Styles
+### Custom stylings
 
-Setting styles with CSS variables on the flipdown element, more customization can be done.
+#### 1. `class` attribute of FlipDown element
 
-- `color` defines font color which is usually for digits.
-- `font-size` defines font size of digits.
-- `--flip-color` defines theme color of flips.
+`flipdown` is a must to set.
+
+`responsive` is an option to make the containing element stretchable using Flexbox's flex-grow.
+
+```html
+<div class='flipdown responsible'></div>
+```
+
+#### 2. `style` attribute of FlipDown element
+
+Some styling can be done with style attribute on the flipdown element.
+
+- `color` `font-family` `font-size` defines font of text elements.
+- `--flip-color` defines theme color of flips (direct option besides `theme`).
 - `--corner-radius` for corners of flips.
 
 ```html
   <div class="flipdown" style="color: black; --flip-color: red; --corner-radius: 1em"></div>
 ```
 
-To customize the each digit, apply style using  `.flipdown .digit` selector.
+#### 3. Option arguments in `new FlipDown(... { options })`
 
-```css
-  .flipdown .digit {
-    padding: 0.6em;
-  }
-```
+##### `headings` and `headingsAt`
 
-## Headings
+specifies heading visibility or text. Pass 4 element array to customize day, hour, min, sec part of heading labels. `false` to hide.
 
-You can add your own rotor group headings by passing an array as part of the `opt` object. Bear in mind this won't change the functionality of the rotors (eg: the 'days' rotor won't magically start counting months because you passed it 'Months' as a heading).
+`headingAt` can be one of `top` , `bottom`, `left` or `right` to specify where the heading label should sit.
 
 Suggested use is for i18n. Usage as follows:
 
@@ -124,14 +133,49 @@ new FlipDown(1538137672, {
 }).start();
 ```
 
-Note that headings will default to English if not provided: `["Days", "Hours", "Minutes", "Seconds"]`
-
-Header labels can be turned off by passing null or false to `headings`.
-
-`headingsAt` option specifies where the heading labels locate, `top` , `bottom`, `left` or `right`.
+Note that headings will default to English if not provided: `["Days", "Hours", "Minutes", "Seconds"]` and `headingsAt` `top`
 
 ```javascript
-new FlipDown(1538137672, { headings: nufalsell }).start();
+new FlipDown(1538137672, { headings: false }).start();
+```
+##### `rotor`
+
+`1` to group digits for each D H M S instead of assigning a rotor to each number.
+
+##### `tick`
+
+`tick` specifies a callback function, which is called every time FlipDown flips.
+
+##### `ended`
+
+`ended` is called when FlipDown reaches the end of countdown. (Same time as IfEnded )
+
+```javascript
+new FlipDown(1538137672, {
+  headings: ['D', 'H', 'M', 'S'],
+  headingsAt: 'right',
+  rotor: 1,
+  tick: function(){
+
+  },
+  ended: function(){
+
+  }
+}).start();
+```
+
+#### 4. Further styling options ( more direct )
+
+Some of sub elements in FlipDown can be stylized by using actual CSS selector.
+
+- `.flipdown .delimiter` to customize the delimiter text which is usually `:` between digit groups.
+- `.flipdown .rotor-group-heading` to customize the heading labels which are usually `Days` `Hours`...
+- `.flipdown .digit` to select text element in each rotor element for adjusting font or padding.
+
+```css
+  .flipdown .digit {
+    padding: 0.6em;
+  }
 ```
 
 Heading text can be styled with `.flipdown .rotor-group-heading` selector.
@@ -142,36 +186,9 @@ Heading text can be styled with `.flipdown .rotor-group-heading` selector.
   }
 ```
 
-### Reponsive to stretch
-
-```html
-<div id="flipdown" class="flipdown responsive"></div>
-```
-
-## Callbacks
-
-### tick
-
-`tick` specifies a callback function, which is called every time FlipDown flips.
-
-### ended
-
-`ended` is called when FlipDown reaches the end of countdown. (Same as IfEnded )
-
-```javascript
-new FlipDown(1538137672, {
-  tick: function(){
-
-  },
-  ended: function(){
-
-  }
-}).start();
-```
-
 ## API
 
-### `FlipDown.prototype.constructor(uts, [el], [opts])`
+### `FlipDown(uts, [el], [opts])`
 
 Create a new FlipDown instance.
 
@@ -200,15 +217,15 @@ Optionally specify additional configuration settings. Currently supported settin
 - [`theme`](#Themes)
 - [`headings`](#Headings)
 - `headingsAt` top | bottom | left | right
-- `rotor` `1` to group all digits in one rotor.
+- `rotor` `1` to group digits in one rotor.
 - [`tick`](#tick)
 - [`ended`](#ended)
 
-### `FlipDown.prototype.start()`
+### `FlipDown.start()`
 
 Start the countdown.
 
-### `FlipDown.prototype.ifEnded(callback)`
+### `FlipDown.ifEnded(callback)`
 
 Call a function once the countdown has ended.
 
@@ -233,9 +250,9 @@ var flipdown = new FlipDown(1538137672)
     console.log("The countdown has ended!");
   });
 ```
-## How to build
+## How to build js and css
 
-Build configuration is not included in the project. But the original source is just 2 files:
+Build configuration is not included in the project. But the original code is just 2 files:
 
 - **flipdown.ts** - TypeScript source code should be compiled in `.js` then `.min.js` by minifier
 - **flipdown.less** - LESS CSS file should be compiled in `.css` and `.min.css`  by minifier
