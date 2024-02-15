@@ -16,7 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
     {
       title: "no days",
       uts: (new Date().getTime() / 1000) + (86400 * 1234) + 1,
-      opts: { theme: 'light', rotor:1, delimiters: ['-','-','-','.'] }
+      style: '--corner-radius: 0.4em; --flip-speed: 0.2s;',
+      opts: { theme: 'light', headingsAt:'bottom', rotor:1, delimiters: ['-','-','-',''] }
     },
     {
       title: "no days",

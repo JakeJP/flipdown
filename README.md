@@ -111,9 +111,10 @@ Some styling can be done with style attribute on the flipdown element.
 - `color` `font-family` `font-size` defines font of text elements.
 - `--flip-color` defines theme color of flips (direct option besides `theme`).
 - `--corner-radius` for corners of flips.
+- `--flip-sleed` to define the flip speed. Default is `0.5s`
 
 ```html
-  <div class="flipdown" style="color: black; --flip-color: red; --corner-radius: 1em"></div>
+  <div class="flipdown" style="color: black; --flip-color: red; --corner-radius: 1em; --flip-speed: 0.2s; "></div>
 ```
 
 #### 3. Option arguments in `new FlipDown(... { options })`

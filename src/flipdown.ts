@@ -51,7 +51,7 @@ class FlipDown {
       ended: null,
     };
 
-  constructor(uts: Date | number, el = "flipdown", opt? : any, actions?: Array<any> ) {
+  constructor(uts: Date | number, el = "flipdown", opt? : any ) {
 
     // If uts is not specified
     if (typeof uts !== "number" && !(uts instanceof Date)) {
@@ -81,6 +81,8 @@ class FlipDown {
     // Parse options
     this._parseOptions(opt as Options);
     this.setTheme( this.opts.theme );
+
+    this._init();
     // Print Version
     console.log(`FlipDown ${FlipDown.version} (Theme: ${this.opts.theme})`);
   }
@@ -91,9 +93,6 @@ class FlipDown {
    * @author PButcher
    **/
   start() {
-    // Initialise the clock
-    if (!this.initialised) this._init();
-
     // Set up the countdown interval
     this.countdown = setInterval(this._tick.bind(this), 1000);
     this.element.classList.remove("flipdown-stopped");
@@ -217,7 +216,6 @@ class FlipDown {
 
     // Set initial values;
     this._tick();
-    this._updateClockValues();
     // append all elements at a time
     var precedingZeroToHide = this.opts.digits == "auto";
     
@@ -232,7 +230,6 @@ class FlipDown {
       }
     });
     this.children.forEach( i => this.element.appendChild(i.element));
-    return this;
   }
 
   /**
@@ -249,23 +246,18 @@ class FlipDown {
     var index = 0;
     var clockValue: number;
     var divs = [86400, 3600, 60, 1];
-    this.rotorGroups
-    .forEach( ( g, i) => {
-      clockValue = (<FlipDown.RotorGroup>g).clockValue = Math.floor(diff / divs[i]);
+    this.rotorGroups.forEach( (g, i) => {
+      clockValue = g.clockValue = Math.floor(diff / divs[i]);
       diff -= clockValue * divs[i];
     })
    
     if( this.opts.tick && typeof this.opts.tick == "function")
       this.opts.tick.call( this, this.epoch - this.now, this.now );
     // Update clock values
-    this._updateClockValues();
+    this.rotorGroups.forEach(r => r.updateClockValue());
 
     // Has the countdown ended?
     this._hasCountdownEnded();
-  }
-
-  private _updateClockValues() {
-    this.rotorGroups.forEach(r => r.updateClockValue());
   }
 }
 namespace FlipDown {
@@ -278,7 +270,7 @@ namespace FlipDown {
     rotorTop: HTMLElement;
     rotorBottom: HTMLElement;
     prevClockValue: string;
-    constructor( v : any ){
+    constructor(){
       var o = this;
       var rotor = o.element = document.createElement("div");
       rotor.className = "rotor";
@@ -291,49 +283,47 @@ namespace FlipDown {
       o.rotorTop = rotor.querySelector("[class='rotor-top'] [class='digit']")!;
       o.rotorBottom = rotor.querySelector("[class='rotor-bottom'] [class='digit']")!;
 
-      var text = v.toString();
-      o.rotorLeafRear.textContent = text;
-      o.rotorTop.textContent = text;
-      o.rotorBottom.textContent = text;      
+      o.rotorLeaf.addEventListener("transitionend", (e : TransitionEvent) => o.transitionend(e) ); 
     }
     setText( text: string) : void {
-      //if( this.prevClockValue && text == this.prevClockValue )
-      //  return;
-      this.rotorLeafFront.textContent = this.prevClockValue;
-      this.rotorBottom.textContent = this.prevClockValue;
-
       var me = this;
-      function rotorTopFlip() {
-        if (me.rotorTop.textContent != text) {
-          me.rotorTop.textContent = text;
-        }
+      if( me.prevClockValue && text === me.prevClockValue )
+        return;
+
+      me.rotorLeafFront.textContent = me.prevClockValue || text;
+      me.rotorBottom.textContent = me.prevClockValue || text;
+
+      me.rotorTop.textContent = text;
+
+      me.rotorLeafRear.textContent = text;
+      
+      if( me.prevClockValue ){
+        me.rotorLeaf.classList.remove("flipped");
+        me.rotorLeaf.offsetWidth;
+        me.rotorLeaf.classList.add("flipped");
       }
 
-      function rotorLeafRearFlip() {
-        var el = me.rotorLeafRear;
-        if ( el.textContent != text) {
-          el.textContent = text;
-          me.rotorLeaf.classList.add("flipped");
-          var flip = setInterval(
-            function () {
-              me.rotorLeaf.classList.remove("flipped");
-              clearInterval(flip);
-            }.bind(this),
-            500
-          );
-        }
-      }
 
-      // Init
-      if ( this.prevClockValue ) {
+      /*if ( me.prevClockValue ) {
+        // update with transition
         setTimeout(rotorTopFlip.bind(this), 500);
         setTimeout(rotorLeafRearFlip.bind(this), 500);
-      } else {
-        rotorTopFlip.call(this);
-        rotorLeafRearFlip.call(this);
+      } else */{
+        // first call to immedeate update
+        //rotorTopFlip.call(this);
+        //rotorLeafRearFlip.call(this);
       }
       
       this.prevClockValue = text;
+    }
+    transitionend( e: TransitionEvent ) {
+      console.log("transitioned...");
+      var me = this;
+      me.rotorLeaf.classList.remove("flipped");
+      me.rotorLeafFront.textContent = me.rotorTop.textContent;
+      me.rotorLeafRear.textContent = me.rotorTop.textContent;
+      me.rotorBottom.textContent = me.rotorLeafRear.textContent;
+
     }
   };
   export class Delimiter {
@@ -366,7 +356,7 @@ namespace FlipDown {
       // rotors
       this.rotors = [];
       for( var i=0; i< numRotors; i++ ){
-        var r = new Rotor(0);
+        var r = new Rotor();
         this.rotors.push(r);
       }
       this.rotors.forEach(r => this.element.appendChild(r.element));
@@ -385,8 +375,9 @@ namespace FlipDown {
 
     rotors: Array<Rotor>;
     clockValue: number;
-    updateClockValue(){
-      var nnn = this.pad(this.clockValue,2);
+    updateClockValue( v : number | null = null){
+      v = v || this.clockValue;
+      var nnn = this.pad(v,2);
       var index = 0;
       var rr = this.rotors.length;
       var p: string; var ri: number = 0; var i: number = 0;

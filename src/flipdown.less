@@ -59,12 +59,13 @@
 .theme-by-variable(green,#2db027);
 //.theme(green,#2db027);
 
-@speed: 0.5s;
+@speed: 0.4s;
 @font-size: 4em;
 @corner-radius: 0.1em;
 
 .flipdown {
     --corner-radius: @corner-radius;
+    --flip-speed: @speed;
     overflow: visible;
     display: flex;
     /* Font styles */
@@ -162,6 +163,7 @@
                 &.flipped {
                     transform: rotateX(-180deg);
                     transition: all @speed ease-in-out;
+                    transition-duration: var(--flip-speed);
                 }
             }
 

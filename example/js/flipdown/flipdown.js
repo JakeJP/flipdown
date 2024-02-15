@@ -22,7 +22,7 @@ var __extends = (this && this.__extends) || (function () {
  * @param {object} opt - Optional configuration settings
  **/
 var FlipDown = /** @class */ (function () {
-    function FlipDown(uts, el, opt, actions) {
+    function FlipDown(uts, el, opt) {
         if (el === void 0) { el = "flipdown"; }
         this.version = FlipDown.version;
         this.initialised = false;
@@ -64,6 +64,7 @@ var FlipDown = /** @class */ (function () {
         // Parse options
         this._parseOptions(opt);
         this.setTheme(this.opts.theme);
+        this._init();
         // Print Version
         console.log("FlipDown ".concat(FlipDown.version, " (Theme: ").concat(this.opts.theme, ")"));
     }
@@ -80,9 +81,6 @@ var FlipDown = /** @class */ (function () {
      * @author PButcher
      **/
     FlipDown.prototype.start = function () {
-        // Initialise the clock
-        if (!this.initialised)
-            this._init();
         // Set up the countdown interval
         this.countdown = setInterval(this._tick.bind(this), 1000);
         this.element.classList.remove("flipdown-stopped");
@@ -193,7 +191,6 @@ var FlipDown = /** @class */ (function () {
         }
         // Set initial values;
         this._tick();
-        this._updateClockValues();
         // append all elements at a time
         var precedingZeroToHide = this.opts.digits == "auto";
         this.rotorGroups.forEach(function (g) {
@@ -207,7 +204,6 @@ var FlipDown = /** @class */ (function () {
             }
         });
         this.children.forEach(function (i) { return _this.element.appendChild(i.element); });
-        return this;
     };
     /**
      * @name _tick
@@ -222,20 +218,16 @@ var FlipDown = /** @class */ (function () {
         var index = 0;
         var clockValue;
         var divs = [86400, 3600, 60, 1];
-        this.rotorGroups
-            .forEach(function (g, i) {
+        this.rotorGroups.forEach(function (g, i) {
             clockValue = g.clockValue = Math.floor(diff / divs[i]);
             diff -= clockValue * divs[i];
         });
         if (this.opts.tick && typeof this.opts.tick == "function")
             this.opts.tick.call(this, this.epoch - this.now, this.now);
         // Update clock values
-        this._updateClockValues();
+        this.rotorGroups.forEach(function (r) { return r.updateClockValue(); });
         // Has the countdown ended?
         this._hasCountdownEnded();
-    };
-    FlipDown.prototype._updateClockValues = function () {
-        this.rotorGroups.forEach(function (r) { return r.updateClockValue(); });
     };
     FlipDown.version = "0.3.4 j";
     FlipDown.headings = ["Days", "Hours", "Minutes", "Seconds"];
@@ -246,7 +238,7 @@ var FlipDown = /** @class */ (function () {
 }());
 (function (FlipDown) {
     var Rotor = /** @class */ (function () {
-        function Rotor(v) {
+        function Rotor() {
             var o = this;
             var rotor = o.element = document.createElement("div");
             rotor.className = "rotor";
@@ -257,43 +249,39 @@ var FlipDown = /** @class */ (function () {
             o.rotorLeafFront = rotor.querySelector("[class='rotor-leaf-front'] [class='digit']");
             o.rotorTop = rotor.querySelector("[class='rotor-top'] [class='digit']");
             o.rotorBottom = rotor.querySelector("[class='rotor-bottom'] [class='digit']");
-            var text = v.toString();
-            o.rotorLeafRear.textContent = text;
-            o.rotorTop.textContent = text;
-            o.rotorBottom.textContent = text;
+            o.rotorLeaf.addEventListener("transitionend", function (e) { return o.transitionend(e); });
         }
         Rotor.prototype.setText = function (text) {
-            //if( this.prevClockValue && text == this.prevClockValue )
-            //  return;
-            this.rotorLeafFront.textContent = this.prevClockValue;
-            this.rotorBottom.textContent = this.prevClockValue;
             var me = this;
-            function rotorTopFlip() {
-                if (me.rotorTop.textContent != text) {
-                    me.rotorTop.textContent = text;
-                }
+            if (me.prevClockValue && text === me.prevClockValue)
+                return;
+            me.rotorLeafFront.textContent = me.prevClockValue || text;
+            me.rotorBottom.textContent = me.prevClockValue || text;
+            me.rotorTop.textContent = text;
+            me.rotorLeafRear.textContent = text;
+            if (me.prevClockValue) {
+                me.rotorLeaf.classList.remove("flipped");
+                me.rotorLeaf.offsetWidth;
+                me.rotorLeaf.classList.add("flipped");
             }
-            function rotorLeafRearFlip() {
-                var el = me.rotorLeafRear;
-                if (el.textContent != text) {
-                    el.textContent = text;
-                    me.rotorLeaf.classList.add("flipped");
-                    var flip = setInterval(function () {
-                        me.rotorLeaf.classList.remove("flipped");
-                        clearInterval(flip);
-                    }.bind(this), 500);
-                }
-            }
-            // Init
-            if (this.prevClockValue) {
-                setTimeout(rotorTopFlip.bind(this), 500);
-                setTimeout(rotorLeafRearFlip.bind(this), 500);
-            }
-            else {
-                rotorTopFlip.call(this);
-                rotorLeafRearFlip.call(this);
+            /*if ( me.prevClockValue ) {
+              // update with transition
+              setTimeout(rotorTopFlip.bind(this), 500);
+              setTimeout(rotorLeafRearFlip.bind(this), 500);
+            } else */ {
+                // first call to immedeate update
+                //rotorTopFlip.call(this);
+                //rotorLeafRearFlip.call(this);
             }
             this.prevClockValue = text;
+        };
+        Rotor.prototype.transitionend = function (e) {
+            console.log("transitioned...");
+            var me = this;
+            me.rotorLeaf.classList.remove("flipped");
+            me.rotorLeafFront.textContent = me.rotorTop.textContent;
+            me.rotorLeafRear.textContent = me.rotorTop.textContent;
+            me.rotorBottom.textContent = me.rotorLeafRear.textContent;
         };
         return Rotor;
     }());
@@ -324,7 +312,7 @@ var FlipDown = /** @class */ (function () {
             // rotors
             _this.rotors = [];
             for (var i = 0; i < numRotors; i++) {
-                var r = new Rotor(0);
+                var r = new Rotor();
                 _this.rotors.push(r);
             }
             _this.rotors.forEach(function (r) { return _this.element.appendChild(r.element); });
@@ -340,8 +328,10 @@ var FlipDown = /** @class */ (function () {
                 this.elementLabel.innerHTML = this.label;
             }
         };
-        RotorGroup.prototype.updateClockValue = function () {
-            var nnn = this.pad(this.clockValue, 2);
+        RotorGroup.prototype.updateClockValue = function (v) {
+            if (v === void 0) { v = null; }
+            v = v || this.clockValue;
+            var nnn = this.pad(v, 2);
             var index = 0;
             var rr = this.rotors.length;
             var p;

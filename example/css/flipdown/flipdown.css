@@ -46,6 +46,7 @@
 }
 .flipdown {
   --corner-radius: 0.1em;
+  --flip-speed: 0.4s;
   overflow: visible;
   display: flex;
   /* Font styles */
@@ -133,7 +134,8 @@
 }
 .flipdown .rotor-group .rotor .rotor-leaf.flipped {
   transform: rotateX(-180deg);
-  transition: all 0.5s ease-in-out;
+  transition: all 0.4s ease-in-out;
+  transition-duration: var(--flip-speed);
 }
 .flipdown .rotor-group .rotor .rotor-leaf-front,
 .flipdown .rotor-group .rotor .rotor-leaf-rear {
