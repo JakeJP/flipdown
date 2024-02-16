@@ -1,10 +1,13 @@
-This project a forked project from [https://github.com/PButcher/flipdown](https://github.com/PButcher/flipdown) The original project was created by [PButcher](https://github.com/PButcher/flipdown).
+This project was forked from [https://github.com/PButcher/flipdown](https://github.com/PButcher/flipdown) and extended. The original project was created by [PButcher](https://github.com/PButcher/flipdown).
 
 # FlipDown.js Jake's edition 2024
 
 ⏰ A lightweight and performant flip styled countdown clock.
 
-I rewrote the source code in TypeScript and LESS CSS for some extensions which are listed in the feature list.
+
+ [<i class="fab fa-github"></i> GitHub Project](https://github.com/JakeJP/flipdown)
+
+Remade by TypeScript and LESS CSS for extensions which are listed in the feature list.
 
 <div style="text-align:center;"><img src="example/images/screenshot.png" title="Example of FlipDown" style="max-width: 100%;text-align:center"/></div>
 
@@ -17,8 +20,6 @@ I rewrote the source code in TypeScript and LESS CSS for some extensions which a
 - 🎨 Themeable - Choose from built-in themes, or add your own
 - 🌍 i18n - Customisable headings for your language
 
-### In addition to the original version, Jake's edition features the following
-
 - more Responsive - restructured using CSS Flexbox so the size fits and stretches along the drawing container.
 - more digits on **Days** rotor. Grouping digits in one rotor.
 - auto hide preceding zeros.
@@ -28,7 +29,7 @@ Respecting the original edition of FlipDown, usage of Javascript class and HTML 
 
 ## Example
 
-Example live at: https://jakejp.github.io/flipdown/example/
+Example live at: [https://jakejp.github.io/flipdown/example/](https://jakejp.github.io/flipdown/example/)
 
 ## Get started
 
@@ -43,16 +44,17 @@ Example live at: https://jakejp.github.io/flipdown/example/
 <div id="flipdown" class="flipdown"></div>
 ```
 
-#### 2. insert a bit of Javascript. FlipDown takes a Date or unix timestamp (in seconds) to countdown to as an argument.
+#### 2. insert a bit of Javascript. FlipDown takes a Date or unix timestamp (in seconds) to countdown to as an argument. 2nd argument specifies the container element which is usually `<div id="flipdown"></div>`.
 
 ```javascript
 new FlipDown(1538137672).start();
 ```
 
 ```javascript
-new FlipDown(new DateTime(2024, 12,25)).start();
+new FlipDown(new Date(2024, 12,25), "flipdown" ).start();
 ```
 
+When element ID in arugments is ommited, `id='flipdown'` is assumed.
 
 See a full example [here](https://github.com/JakeJP/flipdown/tree/master/example).
 
@@ -111,7 +113,7 @@ Some styling can be done with style attribute on the flipdown element.
 - `color` `font-family` `font-size` defines font of text elements.
 - `--flip-color` defines theme color of flips (direct option besides `theme`).
 - `--corner-radius` for corners of flips.
-- `--flip-sleed` to define the flip speed. Default is `0.5s`
+- `--flip-speed` to define the flip speed. Default is `0.5s`
 
 ```html
   <div class="flipdown" style="color: black; --flip-color: red; --corner-radius: 1em; --flip-speed: 0.2s; "></div>
@@ -167,7 +169,7 @@ new FlipDown(1538137672, {
 
 #### 4. Further styling options ( more direct )
 
-Some of sub elements in FlipDown can be stylized by using actual CSS selector.
+Some of sub elements in FlipDown can be stylized by using actual CSS selectors.
 
 - `.flipdown .delimiter` to customize the delimiter text which is usually `:` between digit groups.
 - `.flipdown .rotor-group-heading` to customize the heading labels which are usually `Days` `Hours`...

@@ -21,7 +21,7 @@ document.addEventListener('DOMContentLoaded', () => {
     },
     {
       title: "no days",
-      style: "--flip-color: #d2d610;",
+      style: "--flip-color: #d2d610; --flip-speed: 0.8s;",
       uts: (new Date().getTime() / 1000) + (86400 * 0.4) + 1,
       opts: { theme: 'yellow' , headingsAt:'bottom'}
     },
